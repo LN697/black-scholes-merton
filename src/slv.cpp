@@ -37,7 +37,7 @@ MCResult mc_slv_price(double S0, double K, double r, double T,
                 if (psi < 1.5) {
                     double b2 = 2.0 / psi - 1.0 + std::sqrt(2.0 / psi) * std::sqrt(2.0 / psi - 1.0);
                     double a = m / (1.0 + b2);
-                    double chi2 = std::normal_distribution<double>(0.0, 1.0)(rng.gen);
+                    double chi2 = rng.gauss();
                     chi2 = chi2 * chi2;
                     v = a * (std::sqrt(b2) + std::sqrt(chi2)) * (std::sqrt(b2) + std::sqrt(chi2));
                 } else {
@@ -83,7 +83,7 @@ MCResult mc_slv_price(double S0, double K, double r, double T,
                     if (psi < 1.5) {
                         double b2 = 2.0 / psi - 1.0 + std::sqrt(2.0 / psi) * std::sqrt(2.0 / psi - 1.0);
                         double a = m / (1.0 + b2);
-                        double chi2 = std::normal_distribution<double>(0.0, 1.0)(rng.gen);
+                        double chi2 = rng.gauss();
                         chi2 = chi2 * chi2;
                         v = a * (std::sqrt(b2) + std::sqrt(chi2)) * (std::sqrt(b2) + std::sqrt(chi2));
                     } else {

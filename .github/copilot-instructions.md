@@ -1,4 +1,4 @@
-# AI agent instructions for this repo (standard-bsm)
+# AI agent instructions for this repo (black-scholes-merton)
 
 Purpose: C++17 pricing toolkit with analytics, PDE, Monte Carlo (GBM), and SLV. Keep edits modular (headers in `include/`, sources in `src/`), and use the Makefile-driven workflow.
 
@@ -42,7 +42,7 @@ Purpose: C++17 pricing toolkit with analytics, PDE, Monte Carlo (GBM), and SLV. 
 - OpenMP: the GBM loop is guarded with `#ifdef _OPENMP` reductions. If you parallelize new loops, copy this pattern. For reproducible streams across threads, prefer the stateless RNG helpers in `math_utils.hpp`.
 - QMC + threads: `Halton2D` is stateful; for parallel/QMC, index-based helpers are available.
 - Compiler flags: `-Wall -Wextra -Wpedantic -O3 -march=native` are enabled—fix warnings rather than suppress them.
-- Binary names: app is `bsm` (not `standard-bsm`); tests are `tests` under `build/bin/`.
+- Binary names: app is `bsm`, tests are `tests` under `build/bin/`.
 
 ## Quick file guide
 - Core: `include/analytic_bs.hpp`, `include/monte_carlo_gbm.hpp`, `include/pde_cn.hpp`, `include/pde_cn_american.hpp`, `include/slv.hpp`.

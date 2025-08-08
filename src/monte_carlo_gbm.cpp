@@ -19,6 +19,9 @@ MCResult mc_gbm_price(double S0, double K, double r, double T, double sigma,
         return (type == OptionType::Call) ? std::max(ST - K, 0.0) : std::max(K - ST, 0.0);
     };
     auto delta_pathwise = [&](double ST){
+        // Pathwise derivative of payoff with respect to S0
+        // For European options: d(payoff)/dS0 = d(payoff)/dST * dST/dS0
+        // where dST/dS0 = ST/S0 and d(payoff)/dST = indicator function
         if (type == OptionType::Call) return (ST > K) ? (ST / S0) : 0.0;
         else return (ST < K) ? -(ST / S0) : 0.0;
     };
@@ -36,8 +39,13 @@ MCResult mc_gbm_price(double S0, double K, double r, double T, double sigma,
         double sumX=0.0, sumY=0.0, sumXY=0.0, sumYY=0.0;
         for (long i = 0; i < std::min<long>(num_paths, 200000); ++i) {
             double Z;
-            if (use_qmc) { double u1,u2,z1,z2; hal.next(u1,u2); box_muller(u1,u2,z1,z2); Z=z1; }
-            else { Z = rng.gauss(); }
+            if (use_qmc) { 
+                auto [u1, u2] = hal.next(); 
+                auto [z1, z2] = box_muller(u1, u2); 
+                Z = z1; 
+            } else { 
+                Z = rng.gauss(); 
+            }
             double ST = S0 * std::exp(drift + volT * Z);
             double X = payoff(ST);
             double Y = ST;
@@ -59,7 +67,9 @@ MCResult mc_gbm_price(double S0, double K, double r, double T, double sigma,
     for (long i = 0; i < num_paths; ++i) {
         double Z;
         if (use_qmc) {
-            double u1, u2, z1, z2; hal.next(u1, u2); box_muller(u1, u2, z1, z2); Z = z1;
+            auto [u1, u2] = hal.next(); 
+            auto [z1, z2] = box_muller(u1, u2); 
+            Z = z1;
         } else {
             Z = rng.gauss();
         }
