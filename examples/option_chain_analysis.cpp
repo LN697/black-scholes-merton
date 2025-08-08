@@ -445,7 +445,7 @@ int main() {
         std::cout << "ATM Call Strike " << atm_analysis.market_data.strike << ":\n";
         std::cout << "  Black-Scholes Price: $" << std::setprecision(2) << atm_analysis.theoretical_price << "\n";
         std::cout << "  Monte Carlo Price: $" << std::setprecision(2) << mc_result.price 
-                  << " ± " << (1.96 * mc_result.std_error) << "\n";
+                  << " +/- " << (1.96 * mc_result.std_error) << "\n";
         std::cout << "  Market Mid Price: $" << std::setprecision(2) << atm_analysis.market_data.mid_price() << "\n";
         std::cout << "  MC vs BS Error: " << std::setprecision(3) 
                   << std::abs(mc_result.price - atm_analysis.theoretical_price) << "\n";

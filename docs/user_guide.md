@@ -84,7 +84,7 @@ int main() {
     MCResult mc_result = mc_gbm_price(S0, K, r, T, sigma, 
                                       100000, OptionType::Call);
     std::cout << "Monte Carlo Price: " << mc_result.price 
-              << " ± " << mc_result.std_error << std::endl;
+              << " +/- " << mc_result.std_error << std::endl;
     
     return 0;
 }

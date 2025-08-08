@@ -117,13 +117,13 @@ namespace {
      */
     void print_parameters(const DemoConfig& config) {
         std::cout << "Input Parameters:\n";
-        std::cout << "  Spot Price (S₀):      " << config.S0 << "\n";
+        std::cout << "  Spot Price (S0):      " << config.S0 << "\n";
         std::cout << "  Strike Price (K):     " << config.K << "\n";
         std::cout << "  Risk-free Rate (r):   " << config.r * 100 << "%\n";
         std::cout << "  Time to Expiry (T):   " << config.T << " years\n";
-        std::cout << "  Volatility (σ):       " << config.sigma * 100 << "%\n";
+        std::cout << "  Volatility (sigma):       " << config.sigma * 100 << "%\n";
         std::cout << "  Option Type:          " << (config.type == OptionType::Call ? "Call" : "Put") << "\n";
-        std::cout << "  Moneyness (S₀/K):     " << config.S0 / config.K << "\n";
+        std::cout << "  Moneyness (S0/K):     " << config.S0 / config.K << "\n";
         std::cout << std::string(70, '-') << "\n";
     }
 
@@ -162,11 +162,11 @@ namespace {
         
         std::cout << std::fixed << std::setprecision(6);
         std::cout << "Price:                    " << price << "\n";
-        std::cout << "Delta (∂P/∂S):           " << std::setprecision(4) << delta << "\n";
-        std::cout << "Gamma (∂²P/∂S²):         " << std::setprecision(4) << gamma << "\n";
-        std::cout << "Vega (∂P/∂σ):            " << std::setprecision(4) << vega << "\n";
-        std::cout << "Theta (∂P/∂T):           " << std::setprecision(4) << theta << "\n";
-        std::cout << "Rho (∂P/∂r):             " << std::setprecision(4) << rho << "\n";
+        std::cout << "Delta (dP/dS):           " << std::setprecision(4) << delta << "\n";
+        std::cout << "Gamma (d2P/dS2):         " << std::setprecision(4) << gamma << "\n";
+        std::cout << "Vega (dP/dsigma):            " << std::setprecision(4) << vega << "\n";
+        std::cout << "Theta (dP/dT):           " << std::setprecision(4) << theta << "\n";
+        std::cout << "Rho (dP/dr):             " << std::setprecision(4) << rho << "\n";
         
         if (config.show_timing) {
             std::cout << "Computation Time:         " << std::setprecision(3) << elapsed << " ms\n";
@@ -234,8 +234,8 @@ namespace {
         
         std::cout << std::fixed << std::setprecision(6);
         std::cout << "Price:                    " << pde_price << "\n";
-        std::cout << "Grid Size:                " << config.pde_S_steps << " × " << config.pde_T_steps 
-                  << " (S × T)\n";
+        std::cout << "Grid Size:                " << config.pde_S_steps << " x " << config.pde_T_steps 
+                  << " (S x T)\n";
         std::cout << "Total Grid Points:        " << format_number(config.pde_S_steps * config.pde_T_steps) << "\n";
         
         if (config.show_timing) {
@@ -309,8 +309,8 @@ namespace {
         std::cout << "Standard Error of Mean:   " << se_of_mean << "\n";
         
         std::cout << "Model Configuration:\n";
-        std::cout << "  Heston Parameters:      κ=" << heston.kappa << ", θ=" << heston.theta 
-                  << ", ξ=" << heston.xi << ", ρ=" << heston.rho << "\n";
+        std::cout << "  Heston Parameters:      kappa=" << heston.kappa << ", theta=" << heston.theta 
+                  << ", xi=" << heston.xi << ", rho=" << heston.rho << "\n";
         std::cout << "  Local Vol Model:        " << (config.use_smile_local_vol ? "Smile" : "CEV") << "\n";
         std::cout << "  Variance Scheme:        " << (config.use_andersen_qe ? "Andersen QE" : "Euler") << "\n";
         std::cout << "  Number of Paths:        " << format_number(config.slv_paths) << "\n";

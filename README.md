@@ -120,7 +120,7 @@ MCResult mc_result = mc_gbm_price(100.0, 100.0, 0.05, 1.0, 0.2,
                                   true); // qmc
 
 std::cout << "MC Price: " << mc_result.price 
-          << " ± " << mc_result.std_error << std::endl;
+          << " +/- " << mc_result.std_error << std::endl;
 ```
 
 ### Advanced Features
@@ -211,19 +211,19 @@ OMP_NUM_THREADS=8 ./build/bin/bsm
 ### Black-Scholes Model
 Classic geometric Brownian motion with constant volatility:
 ```
-dS_t = rS_t dt + σS_t dW_t
+dS_t = rS_t dt + sigma*S_t dW_t
 ```
 
 ### Stochastic Local Volatility (SLV)
 Combines Heston stochastic volatility with local volatility:
 ```
-dS_t = rS_t dt + L(S,t)√v_t σ_local(S,t) S_t dW_t^S
-dv_t = κ(θ - v_t)dt + ξ√v_t dW_t^v
+dS_t = rS_t dt + L(S,t)*sqrt(v_t)*sigma_local(S,t)*S_t*dW_t^S
+dv_t = kappa*(theta - v_t)*dt + xi*sqrt(v_t)*dW_t^v
 ```
 where `L(S,t)` is the leverage function calibrated to market data.
 
 ### Local Volatility Models
-- **CEV Model**: `σ(S) = σ₀(S/S₀)^(β-1)`
+- **CEV Model**: `sigma(S) = sigma_0*(S/S_0)^(beta-1)`
 - **Smile Model**: Parametric local volatility with skew and term structure
 
 ### American Option Pricing

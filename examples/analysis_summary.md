@@ -9,7 +9,7 @@ This document presents the comprehensive analysis of an option chain using the B
 ### 1. Market Overview
 - **Underlying Asset**: Trading at $24,300 (high-value security, likely an index)
 - **Expiration**: 30 days to maturity
-- **Strike Range**: 23,800 to 24,900 (±600 points from ATM)
+- **Strike Range**: 23,800 to 24,900 (+/-600 points from ATM)
 - **Total Options Analyzed**: 46 (23 calls, 23 puts)
 
 ### 2. Pricing Discrepancies
@@ -71,7 +71,7 @@ The option chain data appears to have several quality issues:
 **Monte Carlo Validation Results**:
 - ATM Call (24300 strike):
   - Black-Scholes: $5,025.11
-  - Monte Carlo: $5,017.14 ± $26.28
+  - Monte Carlo: $5,017.14 +/- $26.28
   - Market Price: $98.35
 - **Model Accuracy**: Excellent agreement between BS and MC (error < 0.2%)
 - **Market Discrepancy**: Massive gap between theoretical and market prices

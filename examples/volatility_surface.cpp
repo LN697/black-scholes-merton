@@ -256,15 +256,15 @@ void fit_slv_model(const std::vector<VolPoint>& surface, double S0, double r) {
     auto cev_fn = cev_model.to_fn();
     
     std::cout << "CEV Model:\n";
-    std::cout << "  σ₀ = " << std::setprecision(3) << avg_iv << "\n";
-    std::cout << "  β = 0.8\n";
-    std::cout << "  S₀ = " << S0 << "\n";
+    std::cout << "  sigma_0 = " << std::setprecision(3) << avg_iv << "\n";
+    std::cout << "  beta = 0.8\n";
+    std::cout << "  S_0 = " << S0 << "\n";
     
     // Test CEV local vol at different levels
     std::vector<double> test_spots = {S0 * 0.9, S0, S0 * 1.1};
     for (double S : test_spots) {
         double local_vol = cev_fn(S, 0.1);
-        std::cout << "    σ_local(" << S << ") = " << std::setprecision(3) << (local_vol * 100.0) << "%\n";
+        std::cout << "    sigma_local(" << S << ") = " << std::setprecision(3) << (local_vol * 100.0) << "%\n";
     }
     
     // Smile model
@@ -272,15 +272,15 @@ void fit_slv_model(const std::vector<VolPoint>& surface, double S0, double r) {
     auto smile_fn = smile_model.to_fn();
     
     std::cout << "\nSmile Model:\n";
-    std::cout << "  σ_atm = " << std::setprecision(3) << avg_iv << "\n";
+    std::cout << "  sigma_atm = " << std::setprecision(3) << avg_iv << "\n";
     std::cout << "  p = 0.95\n";
-    std::cout << "  ν = 0.25\n";
-    std::cout << "  ρ = 0.15\n";
+    std::cout << "  nu = 0.25\n";
+    std::cout << "  rho = 0.15\n";
     
     // Test Smile local vol at different levels
     for (double S : test_spots) {
         double local_vol = smile_fn(S, 0.1);
-        std::cout << "    σ_local(" << S << ") = " << std::setprecision(3) << (local_vol * 100.0) << "%\n";
+        std::cout << "    sigma_local(" << S << ") = " << std::setprecision(3) << (local_vol * 100.0) << "%\n";
     }
     
     // Price a representative option using SLV
@@ -310,9 +310,9 @@ void fit_slv_model(const std::vector<VolPoint>& surface, double S0, double r) {
             std::cout << "  Market Price: $" << std::setprecision(2) << atm_option.market_price << "\n";
             std::cout << "  Black-Scholes: $" << std::setprecision(2) << bs_price << "\n";
             std::cout << "  SLV-CEV: $" << std::setprecision(2) << slv_cev.price 
-                      << " ± " << (1.96 * slv_cev.std_error) << "\n";
+                      << " +/- " << (1.96 * slv_cev.std_error) << "\n";
             std::cout << "  SLV-Smile: $" << std::setprecision(2) << slv_smile.price 
-                      << " ± " << (1.96 * slv_smile.std_error) << "\n";
+                      << " +/- " << (1.96 * slv_smile.std_error) << "\n";
             
         } catch (const std::exception& e) {
             std::cout << "  SLV pricing failed: " << e.what() << "\n";

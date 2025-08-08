@@ -244,7 +244,7 @@ void calculate_var(const std::vector<Position>& portfolio, double S0, double r, 
         // Generate correlated shocks
         double z1 = rng.gauss();
         double z2 = rng.gauss();
-        double z3 = rng.gauss();
+        // Note: z3 available for future correlation modeling
         
         // Stock price shock
         double spot_shock = vol_underlying * std::sqrt(dt) * z1;

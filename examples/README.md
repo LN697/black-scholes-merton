@@ -75,7 +75,7 @@ Call   24000     5.20   415.55  210.38  205.67   48.3%  0.721   0.002   18.35  -
 - Calibrate Heston stochastic volatility parameters
 
 **Key Models**:
-- **CEV Local Volatility**: σ(S,t) = σ₀(S/S₀)^(β-1)
+- **CEV Local Volatility**: sigma(S,t) = sigma_0*(S/S_0)^(beta-1)
 - **Smile Local Volatility**: More sophisticated smile-capturing model
 - **Heston Stochastic Volatility**: Full stochastic vol framework
 
@@ -172,21 +172,21 @@ The examples generate several output files:
 The examples use the standard Black-Scholes formula:
 
 ```
-C = S₀N(d₁) - Ke^(-rT)N(d₂)
-P = Ke^(-rT)N(-d₂) - S₀N(-d₁)
+C = S0*N(d1) - K*exp(-r*T)*N(d2)
+P = K*exp(-r*T)*N(-d2) - S0*N(-d1)
 
 where:
-d₁ = [ln(S₀/K) + (r + σ²/2)T] / (σ√T)
-d₂ = d₁ - σ√T
+d1 = [ln(S0/K) + (r + sigma^2/2)*T] / (sigma*sqrt(T))
+d2 = d1 - sigma*sqrt(T)
 ```
 
 ### Greeks Calculations
 Complete Greeks suite:
-- **Delta**: ∂V/∂S (price sensitivity)
-- **Gamma**: ∂²V/∂S² (delta sensitivity)  
-- **Vega**: ∂V/∂σ (volatility sensitivity)
-- **Theta**: ∂V/∂t (time decay)
-- **Rho**: ∂V/∂r (interest rate sensitivity)
+- **Delta**: dV/dS (price sensitivity)
+- **Gamma**: d2V/dS2 (delta sensitivity)  
+- **Vega**: dV/dsigma (volatility sensitivity)
+- **Theta**: dV/dt (time decay)
+- **Rho**: dV/dr (interest rate sensitivity)
 
 ### Risk Metrics
 - **Value-at-Risk**: Quantile-based risk measure
