@@ -34,10 +34,10 @@ numactl --cpunodebind=0 --membind=0 ./build/bin/bsm
 ## 📊 Performance Benchmarks
 
 ### Hardware Configuration
-- **CPU**: Intel i7-10700K @ 3.8GHz (8 cores, 16 threads)
-- **Memory**: 32GB DDR4-3200
-- **Compiler**: GCC 11.2 with `-O3 -march=native`
-- **OS**: Ubuntu 22.04 LTS
+- **CPU**: AMD Ryzen 3 3250U @ 2.6GHz (4 cores, 8 threads)
+- **Memory**: 12GB DDR4-2400
+- **Compiler**: GCC 15.1.0 with `-O3 -march=native`
+- **OS**: Windows 11
 
 ### Pricing Method Comparison
 
