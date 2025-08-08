@@ -9,7 +9,7 @@ This guide provides comprehensive instructions for using the Black-Scholes-Merto
 #### Option 1: Pre-built Binaries (Recommended)
 ```bash
 # Download from releases page
-wget https://github.com/yourusername/black-scholes-merton/releases/latest/bsm-toolkit.tar.gz
+wget https://github.com/ln697/black-scholes-merton/releases/latest/bsm-toolkit.tar.gz
 tar -xzf bsm-toolkit.tar.gz
 cd bsm-toolkit/
 ./bsm
@@ -18,7 +18,7 @@ cd bsm-toolkit/
 #### Option 2: Build from Source
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/black-scholes-merton.git
+git clone https://github.com/ln697/black-scholes-merton.git
 cd black-scholes-merton/
 
 # Build with default settings
