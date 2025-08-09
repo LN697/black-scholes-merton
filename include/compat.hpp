@@ -15,7 +15,6 @@
 #endif
 
 // Force compatibility mode
-#define __NO_MATH_INLINES
 #define _GNU_SOURCE 0
 
 // Standard includes that should work
