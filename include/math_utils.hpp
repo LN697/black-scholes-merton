@@ -64,7 +64,7 @@ inline double norm_cdf(double x) {
  * @par Thread Safety: Yes (pure function)
  */
 inline double norm_pdf(double x) {
-    constexpr double inv_sqrt_2pi = 1.0 / std::sqrt(2.0 * M_PI);
+    constexpr double inv_sqrt_2pi = 0.3989422804014327; // 1.0 / std::sqrt(2.0 * M_PI);
     return inv_sqrt_2pi * std::exp(-0.5 * x * x);
 }
 

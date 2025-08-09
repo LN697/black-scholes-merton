@@ -1,8 +1,10 @@
 #pragma once
+
 #include <vector>
 #include <functional>
 #include <algorithm>
 #include <cmath>
+
 #include "option_types.hpp"
 
 namespace bsm {

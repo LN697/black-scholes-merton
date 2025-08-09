@@ -21,6 +21,7 @@
 #include <vector>
 #include <random>
 #include <chrono>
+#include <string>
 
 #include "analytic_bs.hpp"
 #include "monte_carlo_gbm.hpp"

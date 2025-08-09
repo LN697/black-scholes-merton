@@ -14,6 +14,8 @@
  * @version 1.0
  */
 
+#include "compat.hpp"  // Compatibility header for IntelliSense
+
 #include <iostream>
 #include <vector>
 #include <string>

@@ -1,0 +1,47 @@
+[
+  {
+    "directory": "d:/proj/black-scholes-merton",
+    "command": "C:/mingw64/bin/x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -D_GLIBCXX_USE_FLOAT128=0 -c src/analytic_bs.cpp -o build/release/obj/analytic_bs.o",
+    "file": "src/analytic_bs.cpp"
+  },
+  {
+    "directory": "d:/proj/black-scholes-merton",
+    "command": "C:/mingw64/bin/x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -D_GLIBCXX_USE_FLOAT128=0 -c src/lsm.cpp -o build/release/obj/lsm.o",
+    "file": "src/lsm.cpp"
+  },
+  {
+    "directory": "d:/proj/black-scholes-merton",
+    "command": "C:/mingw64/bin/x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -D_GLIBCXX_USE_FLOAT128=0 -c src/main.cpp -o build/release/obj/main.o",
+    "file": "src/main.cpp"
+  },
+  {
+    "directory": "d:/proj/black-scholes-merton",
+    "command": "C:/mingw64/bin/x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -D_GLIBCXX_USE_FLOAT128=0 -c src/monte_carlo_gbm.cpp -o build/release/obj/monte_carlo_gbm.o",
+    "file": "src/monte_carlo_gbm.cpp"
+  },
+  {
+    "directory": "d:/proj/black-scholes-merton",
+    "command": "C:/mingw64/bin/x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -D_GLIBCXX_USE_FLOAT128=0 -c src/pde_cn.cpp -o build/release/obj/pde_cn.o",
+    "file": "src/pde_cn.cpp"
+  },
+  {
+    "directory": "d:/proj/black-scholes-merton",
+    "command": "C:/mingw64/bin/x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -D_GLIBCXX_USE_FLOAT128=0 -c src/pde_cn_american.cpp -o build/release/obj/pde_cn_american.o",
+    "file": "src/pde_cn_american.cpp"
+  },
+  {
+    "directory": "d:/proj/black-scholes-merton",
+    "command": "C:/mingw64/bin/x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -D_GLIBCXX_USE_FLOAT128=0 -c src/performance_utils.cpp -o build/release/obj/performance_utils.o",
+    "file": "src/performance_utils.cpp"
+  },
+  {
+    "directory": "d:/proj/black-scholes-merton",
+    "command": "C:/mingw64/bin/x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -D_GLIBCXX_USE_FLOAT128=0 -c src/slv.cpp -o build/release/obj/slv.o",
+    "file": "src/slv.cpp"
+  },
+  {
+    "directory": "d:/proj/black-scholes-merton",
+    "command": "C:/mingw64/bin/x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -D_GLIBCXX_USE_FLOAT128=0 -c examples/option_chain_analysis.cpp -o build/release/obj/option_chain_analysis.o",
+    "file": "examples/option_chain_analysis.cpp"
+  }
+]
