@@ -19,7 +19,7 @@
  *   d₂ = d₁ - σ√T
  *   N(x) = Standard normal CDF
  * 
- * @author Black-Scholes-Merton Pricing Toolkit
+ * @author LN697
  * @version 1.0
  */
 

@@ -6,7 +6,7 @@ This guide provides comprehensive instructions for using the Black-Scholes-Merto
 
 ### Installation
 
-#### Option 1: Pre-built Binaries (Recommended)
+#### Option 1: Pre-built Binaries (Not Implemented)
 ```bash
 # Download from releases page
 wget https://github.com/ln697/black-scholes-merton/releases/latest/bsm-toolkit.tar.gz

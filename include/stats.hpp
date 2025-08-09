@@ -8,7 +8,7 @@
  * results from Monte Carlo simulations, including price estimates, standard
  * errors, and Greeks calculations.
  * 
- * @author Black-Scholes-Merton Pricing Toolkit
+ * @author LN697
  * @version 1.0
  */
 

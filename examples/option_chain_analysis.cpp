@@ -10,7 +10,7 @@
  * - Compute Greeks for risk management
  * - Perform statistical analysis of pricing discrepancies
  * 
- * @author Black-Scholes-Merton Pricing Toolkit
+ * @author LN697
  * @version 1.0
  */
 

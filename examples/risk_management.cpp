@@ -9,7 +9,7 @@
  * - Hedge ratio calculations
  * - Risk attribution analysis
  * 
- * @author Black-Scholes-Merton Pricing Toolkit
+ * @author LN697
  * @version 1.0
  */
 

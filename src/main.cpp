@@ -22,6 +22,7 @@
 #include <random>
 #include <chrono>
 #include <sstream>
+#include <cstring>
 
 #include "option_types.hpp"
 #include "analytic_bs.hpp"
@@ -30,6 +31,10 @@
 #include "slv.hpp"
 #include "stats.hpp"
 #include "iv_solve.hpp"
+
+#ifdef USE_PERFORMANCE_UTILS
+#include "performance_utils.hpp"
+#endif
 
 #ifdef BENCHMARK_MODE
 #include <ctime>
@@ -387,9 +392,131 @@ namespace {
 
 } // anonymous namespace
 
-int main() {
+int main(int argc, char* argv[]) {
     try {
         DemoConfig config;
+        bool validate_accuracy = false;
+        bool run_benchmark_suite = false;
+        bool quick_benchmark = false;
+        bool show_arch_info = false;
+        bool show_help = false;
+        
+        // Parse command line arguments
+        for (int i = 1; i < argc; ++i) {
+            std::string arg = argv[i];
+            if (arg == "--validate-accuracy") {
+                validate_accuracy = true;
+            } else if (arg == "--benchmark-suite") {
+                run_benchmark_suite = true;
+            } else if (arg == "--quick-benchmark") {
+                quick_benchmark = true;
+            } else if (arg == "--arch-info") {
+                show_arch_info = true;
+            } else if (arg == "--help" || arg == "-h") {
+                show_help = true;
+            } else if (arg == "--paths" && i + 1 < argc) {
+                config.mc_paths = std::stol(argv[++i]);
+            } else if (arg == "--threads" && i + 1 < argc) {
+#ifdef USE_OPENMP
+                omp_set_num_threads(std::stoi(argv[++i]));
+#endif
+            }
+        }
+        
+        if (show_help) {
+            std::cout << "Black-Scholes-Merton Pricing Toolkit\n\n";
+            std::cout << "Usage: " << argv[0] << " [options]\n\n";
+            std::cout << "Options:\n";
+            std::cout << "  --validate-accuracy    Validate numerical accuracy\n";
+            std::cout << "  --benchmark-suite      Run comprehensive benchmark suite\n";
+            std::cout << "  --quick-benchmark      Run quick performance benchmark\n";
+            std::cout << "  --arch-info           Show architecture information\n";
+            std::cout << "  --paths <n>           Set number of Monte Carlo paths\n";
+            std::cout << "  --threads <n>         Set number of threads (OpenMP)\n";
+            std::cout << "  --help, -h            Show this help message\n";
+            return 0;
+        }
+
+#ifndef USE_PERFORMANCE_UTILS
+        // Suppress unused variable warnings when performance utils are not compiled
+        (void)validate_accuracy;
+        (void)run_benchmark_suite;
+        (void)show_arch_info;
+#endif
+        
+#ifdef USE_PERFORMANCE_UTILS
+        // Show architecture information if requested
+        if (show_arch_info) {
+            auto arch_info = bsm::performance::ArchitectureOptimizer::detect_architecture();
+            std::cout << "=== Architecture Information ===\n";
+            std::cout << "CPU: " << arch_info.cpu_brand << "\n";
+            std::cout << "Physical cores: " << arch_info.num_physical_cores << "\n";
+            std::cout << "Logical cores: " << arch_info.num_logical_cores << "\n";
+            std::cout << "L1 cache: " << arch_info.l1_cache_size << " KB\n";
+            std::cout << "L2 cache: " << arch_info.l2_cache_size << " KB\n";
+            std::cout << "L3 cache: " << arch_info.l3_cache_size << " KB\n";
+            std::cout << "AVX support: " << (arch_info.has_avx ? "Yes" : "No") << "\n";
+            std::cout << "AVX2 support: " << (arch_info.has_avx2 ? "Yes" : "No") << "\n";
+            std::cout << "FMA support: " << (arch_info.has_fma ? "Yes" : "No") << "\n";
+            std::cout << "NUMA support: " << (arch_info.has_numa ? "Yes" : "No") << "\n";
+            if (arch_info.has_numa) {
+                std::cout << "NUMA nodes: " << arch_info.numa_nodes << "\n";
+            }
+            std::cout << "Compiler: " << arch_info.compiler_version << "\n";
+            
+            auto recommendations = bsm::performance::ArchitectureOptimizer::get_optimization_recommendations();
+            if (!recommendations.empty()) {
+                std::cout << "\nOptimization recommendations:\n";
+                for (const auto& rec : recommendations) {
+                    std::cout << "  - " << rec << "\n";
+                }
+            }
+            return 0;
+        }
+        
+        // Validate numerical accuracy if requested
+        if (validate_accuracy) {
+            std::cout << "=== Numerical Accuracy Validation ===\n";
+            bool accuracy_ok = bsm::performance::ArchitectureOptimizer::validate_numerical_accuracy();
+            std::cout << "Numerical accuracy: " << (accuracy_ok ? "PASSED" : "FAILED") << "\n";
+            
+            if (!accuracy_ok) {
+                std::cerr << "WARNING: Numerical accuracy issues detected!\n";
+                std::cerr << "Consider using more conservative compiler flags.\n";
+                return 1;
+            }
+            return 0;
+        }
+        
+        // Run benchmark suite if requested
+        if (run_benchmark_suite) {
+            std::cout << "=== Performance Benchmark Suite ===\n";
+            auto results = bsm::performance::PerformanceBenchmark::run_benchmark_suite();
+            
+            std::cout << std::setw(30) << "Test Name" 
+                      << std::setw(15) << "Time (ms)"
+                      << std::setw(15) << "Throughput"
+                      << std::setw(15) << "Memory (MB)" << "\n";
+            std::cout << std::string(75, '-') << "\n";
+            
+            for (const auto& result : results) {
+                std::cout << std::setw(30) << result.test_name
+                          << std::setw(15) << std::fixed << std::setprecision(3) << result.execution_time_ms
+                          << std::setw(15) << std::fixed << std::setprecision(1) << result.throughput
+                          << std::setw(15) << result.memory_used_mb << "\n";
+            }
+            
+            // Save results
+            bsm::performance::PerformanceBenchmark::save_benchmark_results(results);
+            std::cout << "\nBenchmark results saved to benchmark_results.json\n";
+            return 0;
+        }
+        
+        // Initialize performance optimizations
+        auto thread_config = bsm::performance::ThreadManager::initialize_threading();
+        std::cout << "Performance optimizations initialized\n";
+        std::cout << "Optimal thread count: " << thread_config.num_threads << "\n";
+#endif
         
         // Print application header
         print_header("Black-Scholes-Merton Pricing Toolkit Demo");
@@ -398,9 +525,17 @@ int main() {
         std::cout << "Build: " << __DATE__ << " " << __TIME__ << "\n";
         
 #ifdef USE_OPENMP
-        std::cout << "OpenMP: Enabled\n";
+        std::cout << "OpenMP: Enabled (";
+#ifdef _OPENMP
+        std::cout << "threads: " << omp_get_max_threads();
+#endif
+        std::cout << ")\n";
 #else
         std::cout << "OpenMP: Disabled\n";
+#endif
+
+#ifdef USE_PERFORMANCE_UTILS
+        std::cout << "Performance Utils: Enabled\n";
 #endif
 
 #ifdef BENCHMARK_MODE
@@ -409,6 +544,30 @@ int main() {
 #endif
         
         std::cout << "\n";
+        
+        // Quick benchmark mode
+        if (quick_benchmark) {
+            std::cout << "=== Quick Performance Benchmark ===\n";
+            Timer timer;
+            
+            timer.start();
+            const double price = black_scholes_price(config.S0, config.K, config.r, config.T, config.sigma, config.type);
+            double analytical_time = timer.elapsed_ms();
+            
+            timer.start();
+            const MCResult mc_result = mc_gbm_price(
+                config.S0, config.K, config.r, config.T, config.sigma,
+                100000, config.type, 12345UL, true, true, true, false, false
+            );
+            double mc_time = timer.elapsed_ms();
+            
+            std::cout << std::fixed << std::setprecision(6);
+            std::cout << "Analytical BS:  " << price << " (" << std::setprecision(3) << analytical_time << " ms)\n";
+            std::cout << "Monte Carlo:    " << mc_result.price << " (" << mc_time << " ms)\n";
+            std::cout << "MC Standard Error: " << std::setprecision(6) << mc_result.std_error << "\n";
+            
+            return 0;
+        }
         
         // Show configuration
         print_parameters(config);

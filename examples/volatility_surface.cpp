@@ -9,7 +9,7 @@
  * - Export data for visualization
  * - Calibrate stochastic volatility models
  * 
- * @author Black-Scholes-Merton Pricing Toolkit
+ * @author LN697
  * @version 1.0
  */
 

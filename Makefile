@@ -7,7 +7,22 @@
 #   make PROFILE=1         # Profile-guided optimization build
 #   make COVERAGE=1        # Code coverage analysis build
 #   make STATIC=1          # Static linking
+#   make PERFORMANCE=1     # Enable performance utilities
+#   make NUMA=1            # Enable NUMA optimizations (Linux)
+#   make AVX=1             # Enable AVX/AVX2 vectorization
+#   make FAST_MATH=1       # Enable fast math (use with caution)
+#   make ARCH_NATIVE=0     # Disable native architecture targeting
+#
+# Targets:
+#   make                   # Standard build
+#   make optimized         # Production-optimized build
+#   make ultra-optimized   # Ultra-optimized build (numerical accuracy risk)
+#   make numa-optimized    # NUMA-aware optimized build (Linux)
 #   make test              # Build and run tests
+#   make benchmark         # Run performance benchmarks
+#   make validate-arch     # Validate numerical accuracy on architecture
+#   make regression-test   # Run performance regression tests
+#   make thread-analysis   # Analyze threading performance scaling
 #   make clean             # Clean build artifacts
 #   make help              # Show available targets
 
@@ -23,6 +38,11 @@ PROFILE ?= 0
 COVERAGE ?= 0
 STATIC ?= 0
 BENCHMARK ?= 0
+PERFORMANCE ?= 0
+NUMA ?= 0
+AVX ?= 0
+FAST_MATH ?= 0
+ARCH_NATIVE ?= 1
 
 # Base compiler flags
 CXXFLAGS_BASE := -std=c++17 -Wall -Wextra -Wpedantic
@@ -33,8 +53,26 @@ ifeq ($(DEBUG),1)
     CXXFLAGS_OPT := -O0 -g -DDEBUG -fno-omit-frame-pointer
     BUILD_TYPE := debug
 else
-    CXXFLAGS_OPT := -O3 -DNDEBUG -march=native -mtune=native
+    CXXFLAGS_OPT := -O3 -DNDEBUG
     BUILD_TYPE := release
+    
+    # Target architecture optimization
+    ifeq ($(ARCH_NATIVE),1)
+        CXXFLAGS_OPT += -march=native -mtune=native
+    endif
+    
+    # Additional aggressive optimizations
+    CXXFLAGS_OPT += -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer
+    
+    # Vectorization optimizations
+    ifeq ($(AVX),1)
+        CXXFLAGS_OPT += -mavx -mavx2 -mfma
+    endif
+    
+    # Fast math optimizations (use with caution for numerical accuracy)
+    ifeq ($(FAST_MATH),1)
+        CXXFLAGS_OPT += -ffast-math -funsafe-math-optimizations
+    endif
 endif
 
 # Link-time optimization
@@ -47,6 +85,19 @@ endif
 ifeq ($(OMP),1)
     CXXFLAGS_OPT += -fopenmp -DUSE_OPENMP
     LDFLAGS += -fopenmp
+endif
+
+# Performance utilities
+ifeq ($(PERFORMANCE),1)
+    CXXFLAGS_OPT += -DUSE_PERFORMANCE_UTILS
+endif
+
+# NUMA support (Linux only)
+ifeq ($(NUMA),1)
+    ifeq ($(UNAME_S),Linux)
+        CXXFLAGS_OPT += -DUSE_NUMA
+        LDFLAGS += -lnuma
+    endif
 endif
 
 # Profile-guided optimization
@@ -151,13 +202,53 @@ test-all:
 .PHONY: benchmark
 benchmark: 
 	@echo "Running performance benchmarks..."
-	@$(MAKE) clean && $(MAKE) BENCHMARK=1
+	@$(MAKE) clean && $(MAKE) BENCHMARK=1 PERFORMANCE=1
 	@echo "=== Single-threaded benchmark ==="
 	@time $(TARGET)
 ifeq ($(OMP),1)
 	@echo "=== Multi-threaded benchmark ==="
 	@export OMP_NUM_THREADS=4 && time $(TARGET)
 endif
+
+# Optimized production build
+.PHONY: optimized
+optimized:
+	@echo "Building optimized production version..."
+	@$(MAKE) clean && $(MAKE) OMP=1 PERFORMANCE=1 ARCH_NATIVE=1 AVX=1
+
+# Ultra-optimized build (use with caution - may affect numerical accuracy)
+.PHONY: ultra-optimized
+ultra-optimized:
+	@echo "Building ultra-optimized version (use with caution)..."
+	@$(MAKE) clean && $(MAKE) OMP=1 PERFORMANCE=1 ARCH_NATIVE=1 AVX=1 FAST_MATH=1
+
+# NUMA-aware build (Linux only)
+.PHONY: numa-optimized
+numa-optimized:
+	@echo "Building NUMA-optimized version..."
+	@$(MAKE) clean && $(MAKE) OMP=1 PERFORMANCE=1 NUMA=1 ARCH_NATIVE=1
+
+# Architecture validation
+.PHONY: validate-arch
+validate-arch: optimized
+	@echo "Validating numerical accuracy on current architecture..."
+	@$(TARGET) --validate-accuracy || echo "Numerical accuracy validation failed!"
+
+# Performance regression test
+.PHONY: regression-test
+regression-test: optimized
+	@echo "Running performance regression tests..."
+	@$(TARGET) --benchmark-suite > current_benchmark.json || echo "Benchmark failed"
+	@echo "Benchmark results saved to current_benchmark.json"
+
+# Threading performance analysis
+.PHONY: thread-analysis
+thread-analysis: optimized
+	@echo "Analyzing threading performance..."
+	@for threads in 1 2 4 8 16; do \
+		echo "Testing with $$threads threads:"; \
+		export OMP_NUM_THREADS=$$threads && time $(TARGET) --quick-benchmark; \
+	done
 
 # Profile-guided optimization build
 .PHONY: pgo
@@ -356,6 +447,12 @@ help:
 	@echo "  run-volatility-surface   Run volatility surface analysis"
 	@echo "  run-risk-management      Run risk management analysis"
 	@echo "  benchmark         Run performance benchmarks"
+	@echo "  optimized         Production-optimized build"
+	@echo "  ultra-optimized   Ultra-optimized build (numerical accuracy risk)"
+	@echo "  numa-optimized    NUMA-aware optimized build (Linux)"
+	@echo "  validate-arch     Validate numerical accuracy on architecture"
+	@echo "  regression-test   Run performance regression tests"
+	@echo "  thread-analysis   Analyze threading performance scaling"
 	@echo "  pgo               Profile-guided optimization build"
 	@echo "  coverage          Generate code coverage report"
 	@echo "  static-analysis   Run static code analysis"
@@ -372,6 +469,11 @@ help:
 	@echo "Build options (use as: make OPTION=1 target):"
 	@echo "  DEBUG=1           Enable debug build with symbols"
 	@echo "  OMP=1             Enable OpenMP parallelization"
+	@echo "  PERFORMANCE=1     Enable performance utilities"
+	@echo "  NUMA=1            Enable NUMA optimizations (Linux)"
+	@echo "  AVX=1             Enable AVX/AVX2 vectorization"
+	@echo "  FAST_MATH=1       Enable fast math (use with caution)"
+	@echo "  ARCH_NATIVE=0     Disable native architecture targeting"
 	@echo "  PROFILE=1         Enable profile-guided optimization"
 	@echo "  COVERAGE=1        Enable code coverage analysis"
 	@echo "  STATIC=1          Enable static linking"
@@ -379,7 +481,12 @@ help:
 	@echo ""
 	@echo "Examples:"
 	@echo "  make                    # Standard optimized build"
+	@echo "  make optimized          # Production-optimized build"
 	@echo "  make test OMP=1         # Test with OpenMP enabled"
+	@echo "  make numa-optimized     # NUMA-aware optimized build"
+	@echo "  make ultra-optimized    # Ultra-optimized (use with caution)"
+	@echo "  make validate-arch      # Validate numerical accuracy"
+	@echo "  make thread-analysis    # Analyze threading performance"
 	@echo "  make examples           # Build all example programs"
 	@echo "  make run-examples       # Build and run all examples"
 	@echo "  make run-option-chain   # Run option chain analysis"

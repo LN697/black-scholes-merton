@@ -4,13 +4,73 @@ This guide provides detailed information on optimizing performance for the Black
 
 ## 🚀 Quick Performance Tips
 
+### New Performance Build Targets
+```bash
+# Production-optimized build with all optimizations
+make optimized
+
+# Ultra-optimized build (use with caution for numerical accuracy)
+make ultra-optimized
+
+# NUMA-aware build for large systems (Linux only)
+make numa-optimized
+
+# Validate numerical accuracy on current hardware
+make validate-arch
+
+# Performance regression testing
+make regression-test
+
+# Threading performance analysis
+make thread-analysis
+```
+
+### Architecture-Specific Optimization
+```bash
+# Enable performance utilities
+make PERFORMANCE=1
+
+# Enable AVX/AVX2 vectorization
+make AVX=1
+
+# Enable NUMA optimizations (Linux)
+make NUMA=1
+
+# Enable fast math optimizations (use with caution)
+make FAST_MATH=1
+
+# Disable native architecture targeting
+make ARCH_NATIVE=0
+```
+
+### Runtime Performance Utilities
+```bash
+# Show architecture information
+./build/bin/bsm --arch-info
+
+# Validate numerical accuracy
+./build/bin/bsm --validate-accuracy
+
+# Run benchmark suite
+./build/bin/bsm --benchmark-suite
+
+# Quick performance test
+./build/bin/bsm --quick-benchmark
+
+# Set thread count
+./build/bin/bsm --threads 8
+
+# Set Monte Carlo paths
+./build/bin/bsm --paths 1000000
+```
+
 ### Compiler Optimizations
 ```bash
 # Recommended production build
-make CXXFLAGS="-std=c++17 -O3 -march=native -DNDEBUG -flto"
+make optimized CXXFLAGS="-std=c++17 -O3 -march=native -DNDEBUG -flto"
 
 # Profile-guided optimization (advanced)
-make CXXFLAGS="-std=c++17 -O3 -march=native -fprofile-generate"
+make PROFILE=1
 # Run representative workload
 make clean && make CXXFLAGS="-std=c++17 -O3 -march=native -fprofile-use"
 ```
@@ -18,7 +78,7 @@ make clean && make CXXFLAGS="-std=c++17 -O3 -march=native -fprofile-use"
 ### OpenMP Parallelization
 ```bash
 # Enable parallel Monte Carlo
-make OMP=1
+make optimized
 
 # Control thread count at runtime
 export OMP_NUM_THREADS=8
@@ -27,8 +87,11 @@ export OMP_NUM_THREADS=8
 
 ### Memory Optimization
 ```bash
-# For large simulations, consider NUMA binding
+# For large simulations, consider NUMA binding (Linux)
 numactl --cpunodebind=0 --membind=0 ./build/bin/bsm
+
+# Monitor memory usage
+make PERFORMANCE=1 && ./build/bin/bsm --benchmark-suite
 ```
 
 ## 📊 Performance Benchmarks
@@ -426,10 +489,224 @@ CXXFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections  # Dead code e
 ```
 
 ### Deployment Checklist
-- [ ] Optimize compiler flags for target architecture
-- [ ] Enable OpenMP for multi-threaded workloads
-- [ ] Validate numerical accuracy on target hardware
-- [ ] Profile memory usage for large-scale deployments
-- [ ] Set appropriate thread counts and CPU affinity
-- [ ] Monitor performance regressions in production
-- [ ] Consider NUMA topology for large systems
+- [x] Optimize compiler flags for target architecture
+- [x] Enable OpenMP for multi-threaded workloads  
+- [x] Validate numerical accuracy on target hardware
+- [x] Profile memory usage for large-scale deployments
+- [x] Set appropriate thread counts and CPU affinity
+- [x] Monitor performance regressions in production
+- [x] Consider NUMA topology for large systems
+
+## 🛠️ Performance Utilities Framework
+
+The toolkit now includes a comprehensive performance utilities framework for automatic optimization and monitoring.
+
+### Architecture Detection and Optimization
+
+#### Automatic Architecture Detection
+```cpp
+#include "performance_utils.hpp"
+
+// Detect current system architecture
+auto arch_info = bsm::performance::ArchitectureOptimizer::detect_architecture();
+
+std::cout << "CPU: " << arch_info.cpu_brand << std::endl;
+std::cout << "Cores: " << arch_info.num_physical_cores << " physical, " 
+          << arch_info.num_logical_cores << " logical" << std::endl;
+std::cout << "Cache: L1=" << arch_info.l1_cache_size 
+          << "KB, L2=" << arch_info.l2_cache_size 
+          << "KB, L3=" << arch_info.l3_cache_size << "KB" << std::endl;
+std::cout << "SIMD: AVX=" << arch_info.has_avx 
+          << ", AVX2=" << arch_info.has_avx2 
+          << ", FMA=" << arch_info.has_fma << std::endl;
+```
+
+#### Compiler Flag Optimization
+```cpp
+// Get optimal compiler flags for current architecture
+auto flags = bsm::performance::ArchitectureOptimizer::get_optimal_compiler_flags();
+for (const auto& flag : flags) {
+    std::cout << flag << " ";
+}
+```
+
+#### Numerical Accuracy Validation
+```cpp
+// Validate numerical accuracy on current hardware
+bool accuracy_ok = bsm::performance::ArchitectureOptimizer::validate_numerical_accuracy();
+if (!accuracy_ok) {
+    std::cerr << "WARNING: Numerical accuracy issues detected!" << std::endl;
+}
+```
+
+### Threading Management
+
+#### Optimal Thread Configuration
+```cpp
+// Initialize optimal threading configuration
+auto thread_config = bsm::performance::ThreadManager::initialize_threading();
+
+std::cout << "Optimal threads: " << thread_config.num_threads << std::endl;
+std::cout << "Hyperthreading: " << thread_config.hyperthreading_enabled << std::endl;
+```
+
+#### CPU Affinity Control
+```cpp
+// Set CPU affinity for consistent performance
+std::vector<int> cpus = {0, 1, 2, 3};  // Use first 4 cores
+bool success = bsm::performance::ThreadManager::set_cpu_affinity(cpus);
+```
+
+#### NUMA Policy Management
+```cpp
+// Set NUMA memory policy (Linux only)
+std::vector<int> numa_nodes = {0};  // Bind to NUMA node 0
+bool success = bsm::performance::ThreadManager::set_numa_policy(0, numa_nodes);
+```
+
+### Memory Profiling
+
+#### Memory Usage Monitoring
+```cpp
+// Start memory profiling
+bsm::performance::MemoryProfiler::start_profiling();
+
+// Run your computation
+auto result = mc_gbm_price(/* parameters */);
+
+// Get memory profile
+auto profile = bsm::performance::MemoryProfiler::stop_profiling();
+std::cout << "Peak memory: " << profile.peak_memory_mb << " MB" << std::endl;
+std::cout << "Memory bandwidth: " << profile.memory_bandwidth_gb_s << " GB/s" << std::endl;
+```
+
+#### Memory Requirement Estimation
+```cpp
+// Estimate memory requirements before computation
+std::map<std::string, double> params = {
+    {"paths", 1000000},
+    {"control_variate", 1}
+};
+size_t estimated_mb = bsm::performance::MemoryProfiler::estimate_memory_requirement(
+    "monte_carlo", params);
+std::cout << "Estimated memory: " << estimated_mb << " MB" << std::endl;
+```
+
+### Performance Benchmarking
+
+#### Automated Benchmarking
+```cpp
+// Run comprehensive benchmark suite
+auto results = bsm::performance::PerformanceBenchmark::run_benchmark_suite();
+
+for (const auto& result : results) {
+    std::cout << result.test_name << ": " 
+              << result.execution_time_ms << " ms, "
+              << result.throughput << " ops/sec" << std::endl;
+}
+```
+
+#### Custom Benchmarks
+```cpp
+// Benchmark specific code
+auto result = bsm::performance::PerformanceBenchmark::run_benchmark(
+    "Custom Test",
+    []() {
+        // Your code to benchmark
+        double price = black_scholes_price(100, 100, 0.05, 1.0, 0.2, OptionType::Call);
+        volatile double sink = price;  // Prevent optimization
+    },
+    10  // 10 iterations
+);
+```
+
+#### Performance Regression Detection
+```cpp
+// Save current benchmark results
+bsm::performance::PerformanceBenchmark::save_benchmark_results(results, "current.json");
+
+// Load historical results and detect regressions
+auto history = bsm::performance::PerformanceBenchmark::load_benchmark_history("history.json");
+auto regressions = bsm::performance::PerformanceBenchmark::detect_regressions(
+    results, history, 0.05  // 5% regression threshold
+);
+
+if (!regressions.empty()) {
+    std::cout << "Performance regressions detected:" << std::endl;
+    for (const auto& regression : regressions) {
+        std::cout << "  " << regression << std::endl;
+    }
+}
+```
+
+### High-Precision Timing
+
+#### Scoped Benchmarking
+```cpp
+// Automatic timing with RAII
+{
+    BENCHMARK_SCOPE("Monte Carlo Pricing");
+    auto result = mc_gbm_price(/* parameters */);
+    // Timing printed automatically when scope exits
+}
+
+// Custom callback for timing results
+{
+    BENCHMARK_SCOPE_CALLBACK("PDE Pricing", [](const std::string& name, double time) {
+        std::cout << "Custom: " << name << " took " << time << " ms" << std::endl;
+    });
+    auto result = pde_crank_nicolson(/* parameters */);
+}
+```
+
+#### Manual Timing Control
+```cpp
+bsm::performance::HighPrecisionTimer timer;
+
+timer.start();
+// Your computation
+timer.stop();
+
+std::cout << "Elapsed: " << timer.elapsed_ms() << " ms" << std::endl;
+std::cout << "Elapsed: " << timer.elapsed_us() << " μs" << std::endl;
+std::cout << "Elapsed: " << timer.elapsed_ns() << " ns" << std::endl;
+```
+
+### Production Monitoring
+
+#### Performance Score Tracking
+```cpp
+// Calculate overall performance score
+double score = bsm::performance::PerformanceBenchmark::calculate_performance_score(results);
+std::cout << "Performance score: " << score << std::endl;
+
+// Monitor performance over time
+// (Integrate with your monitoring system)
+```
+
+#### Hardware Fingerprinting
+```cpp
+// Generate hardware fingerprint for consistent comparison
+std::string fingerprint = bsm::performance::PerformanceBenchmark::generate_hardware_fingerprint();
+std::cout << "Hardware fingerprint: " << fingerprint << std::endl;
+```
+
+### Best Practices
+
+1. **Always validate numerical accuracy** when using aggressive optimizations
+2. **Profile before optimizing** to identify actual bottlenecks
+3. **Use architecture-specific builds** for production deployments
+4. **Monitor performance regressions** in CI/CD pipelines
+5. **Consider NUMA topology** for large-scale deployments
+6. **Set appropriate thread counts** based on workload characteristics
+7. **Use memory profiling** for large simulations to avoid OOM issues
+
+### Integration with CI/CD
+
+```bash
+# In your CI/CD pipeline
+make optimized
+make validate-arch || exit 1
+make regression-test || exit 1
+make test OMP=1 PERFORMANCE=1
+```

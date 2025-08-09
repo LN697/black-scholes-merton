@@ -9,9 +9,9 @@
  * - Greeks calculations
  * - Put-call parity
  * - American vs European option pricing
- * - SLV model sanity checks
+ * - SLV model sanity checks 
  * 
- * @author Black-Scholes-Merton Pricing Toolkit
+ * @author LN697
  * @version 1.0
  */
 
@@ -20,6 +20,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <chrono>
 
 #include "analytic_bs.hpp"
 #include "monte_carlo_gbm.hpp"
@@ -29,6 +30,10 @@
 #include "iv_solve.hpp"
 #include "math_utils.hpp"
 #include "stats.hpp"
+
+#ifdef USE_PERFORMANCE_UTILS
+#include "performance_utils.hpp"
+#endif
 
 using namespace bsm;
 
@@ -369,6 +374,156 @@ void test_edge_cases() {
 }
 
 /**
+ * @brief Test performance and optimization features
+ */
+void test_performance_optimization() {
+#ifdef USE_PERFORMANCE_UTILS
+    print_section("Performance Optimization Tests");
+    
+    // Test architecture detection
+    auto arch_info = bsm::performance::ArchitectureOptimizer::detect_architecture();
+    test_assert(!arch_info.cpu_brand.empty(), "CPU brand detection");
+    test_assert(arch_info.num_physical_cores > 0, "Physical core count detection");
+    test_assert(arch_info.num_logical_cores >= arch_info.num_physical_cores, 
+                "Logical cores >= physical cores");
+    test_assert(arch_info.cache_line_size > 0, "Cache line size detection");
+    
+    // Test numerical accuracy validation
+    bool accuracy_ok = bsm::performance::ArchitectureOptimizer::validate_numerical_accuracy();
+    test_assert(accuracy_ok, "Numerical accuracy validation");
+    
+    // Test threading configuration
+    auto thread_config = bsm::performance::ThreadManager::initialize_threading();
+    test_assert(thread_config.num_threads > 0, "Thread count configuration");
+    
+    // Test memory profiling
+    bsm::performance::MemoryProfiler::start_profiling();
+    
+    // Allocate some memory for testing
+    std::vector<double> test_data(1000000, 1.0);
+    double sum = std::accumulate(test_data.begin(), test_data.end(), 0.0);
+    volatile double sink = sum; // Prevent optimization
+    (void)sink;
+    
+    auto memory_profile = bsm::performance::MemoryProfiler::stop_profiling();
+    test_assert(memory_profile.current_memory_mb > 0, "Memory usage detection");
+    test_assert(memory_profile.available_memory_mb > 0, "Available memory detection");
+    
+    // Test benchmark functionality
+    auto benchmark_result = bsm::performance::PerformanceBenchmark::run_benchmark(
+        "Test Benchmark",
+        []() {
+            // Simple computation for testing
+            double result = 0.0;
+            for (int i = 0; i < 100000; ++i) {
+                result += std::sin(i * 0.001);
+            }
+            volatile double sink = result;
+            (void)sink;
+        },
+        3  // 3 iterations
+    );
+    
+    test_assert(benchmark_result.execution_time_ms > 0, "Benchmark timing");
+    test_assert(benchmark_result.throughput > 0, "Benchmark throughput calculation");
+    test_assert(!benchmark_result.test_name.empty(), "Benchmark name assignment");
+    
+    std::cout << "Performance optimization tests completed" << std::endl;
+#else
+    print_section("Performance Optimization Tests (SKIPPED - not compiled with USE_PERFORMANCE_UTILS)");
+#endif
+}
+
+/**
+ * @brief Test performance regression detection
+ */
+void test_performance_regression() {
+#ifdef USE_PERFORMANCE_UTILS
+    print_section("Performance Regression Tests");
+    
+    const double S0 = 100.0, K = 100.0, r = 0.05, T = 1.0, sigma = 0.2;
+    
+    // Benchmark analytical pricing
+    auto analytical_benchmark = bsm::performance::PerformanceBenchmark::run_benchmark(
+        "Analytical BS Pricing",
+        [=]() {
+            for (int i = 0; i < 1000; ++i) {
+                double price = black_scholes_price(S0, K, r, T, sigma, OptionType::Call);
+                volatile double sink = price;
+                (void)sink;
+            }
+        }
+    );
+    
+    // Benchmark Monte Carlo pricing
+    auto mc_benchmark = bsm::performance::PerformanceBenchmark::run_benchmark(
+        "Monte Carlo Pricing",
+        [=]() {
+            auto result = mc_gbm_price(S0, K, r, T, sigma, 10000, OptionType::Call, 12345UL);
+            volatile double sink = result.price;
+            (void)sink;
+        }
+    );
+    
+    test_assert(analytical_benchmark.execution_time_ms > 0, "Analytical benchmark timing");
+    test_assert(mc_benchmark.execution_time_ms > 0, "Monte Carlo benchmark timing");
+    test_assert(analytical_benchmark.execution_time_ms < mc_benchmark.execution_time_ms, 
+                "Analytical should be faster than MC");
+    
+    // Test threading performance (if OpenMP is available)
+#ifdef USE_OPENMP
+    auto thread_metrics = bsm::performance::ThreadManager::monitor_thread_performance();
+    test_assert(thread_metrics.find("max_threads") != thread_metrics.end(), 
+                "Thread performance monitoring");
+#endif
+    
+    std::cout << "Performance regression tests completed" << std::endl;
+#else
+    print_section("Performance Regression Tests (SKIPPED - not compiled with USE_PERFORMANCE_UTILS)");
+#endif
+}
+
+/**
+ * @brief Test numerical stability under optimization
+ */
+void test_numerical_stability() {
+    print_section("Numerical Stability Under Optimization");
+    
+    const double S0 = 100.0, K = 100.0, r = 0.05, T = 1.0, sigma = 0.2;
+    
+    // Test pricing with extreme parameters
+    double extreme_cases[][5] = {
+        {1e-6, K, r, T, sigma},      // Very small S
+        {1e6, K, r, T, sigma},       // Very large S
+        {S0, 1e-6, r, T, sigma},     // Very small K
+        {S0, 1e6, r, T, sigma},      // Very large K
+        {S0, K, 1e-6, T, sigma},     // Very small r
+        {S0, K, 0.5, T, sigma},      // Large r
+        {S0, K, r, 1e-6, sigma},     // Very small T
+        {S0, K, r, 100.0, sigma},    // Very large T
+        {S0, K, r, T, 1e-6},         // Very small sigma
+        {S0, K, r, T, 2.0}           // Large sigma
+    };
+    
+    for (size_t i = 0; i < sizeof(extreme_cases) / sizeof(extreme_cases[0]); ++i) {
+        double price = black_scholes_price(extreme_cases[i][0], extreme_cases[i][1], 
+                                         extreme_cases[i][2], extreme_cases[i][3], 
+                                         extreme_cases[i][4], OptionType::Call);
+        test_assert(std::isfinite(price) && price >= 0, 
+                    "Extreme parameter case " + std::to_string(i) + " produces valid price");
+    }
+    
+    // Test numerical precision with small differences
+    double base_price = black_scholes_price(S0, K, r, T, sigma, OptionType::Call);
+    double perturbed_price = black_scholes_price(S0 * (1 + 1e-12), K, r, T, sigma, OptionType::Call);
+    
+    // Small changes should produce small, finite differences
+    double relative_change = std::abs(perturbed_price - base_price) / base_price;
+    test_assert(std::isfinite(relative_change) && relative_change < 1e-6, 
+                "Small parameter changes produce stable results");
+}
+
+/**
  * @brief Main test runner
  */
 int main() {
@@ -385,6 +540,11 @@ int main() {
         test_math_utils();
         test_statistics();
         test_edge_cases();
+        
+        // Performance and optimization tests
+        test_performance_optimization();
+        test_performance_regression();
+        test_numerical_stability();
 
         std::cout << "\n=== Test Summary ===" << std::endl;
         std::cout << "Passed: " << passed_tests << "/" << test_count << " tests" << std::endl;

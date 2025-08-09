@@ -23,11 +23,23 @@ A high-performance, modular C++17 options pricing library featuring multiple num
 - **Implied Volatility**: Newton-Raphson solver for market-implied parameters
 
 ## 🎯 Performance Features
+
+### New Performance Optimization Framework
+- **Architecture Detection**: Automatic CPU feature detection and optimization
+- **Numerical Accuracy Validation**: Hardware-specific accuracy testing
+- **Memory Profiling**: Real-time memory usage monitoring and optimization
+- **Performance Benchmarking**: Comprehensive benchmark suite with regression detection
+- **Threading Optimization**: Intelligent thread count and CPU affinity management
+- **NUMA Awareness**: Multi-node memory allocation optimization (Linux)
+
+### Core Performance Features
 - Optimized for modern CPUs with `-march=native`
-- SIMD-friendly algorithms and memory layouts
-- Optional OpenMP parallelization
+- SIMD-friendly algorithms and memory layouts (AVX/AVX2 support)
+- Optional OpenMP parallelization with intelligent thread management
 - Efficient quasi-random number generation
 - Cache-optimized data structures
+- Profile-guided optimization support
+- Fast math optimizations (optional, with accuracy validation)
 
 ## 📁 Project Structure
 
@@ -60,35 +72,48 @@ A high-performance, modular C++17 options pricing library featuring multiple num
 # Install MSYS2 and MinGW toolchain
 choco install msys2
 
-# Build the project
-make
+# Standard optimized build
+make optimized
 
-# Run tests
-make test
+# Run tests with performance features
+make test PERFORMANCE=1
 
-# Enable OpenMP parallelization
-make OMP=1
+# Ultra-optimized build (use with caution)
+make ultra-optimized
 ```
 
 #### Linux/macOS
 ```bash
 # Install build tools (Ubuntu/Debian)
-sudo apt install build-essential
+sudo apt install build-essential libnuma-dev  # NUMA support
 
-# Build and test
-make && make test
+# Production-optimized build
+make optimized
 
-# Parallel build with OpenMP
-make OMP=1 -j$(nproc)
+# NUMA-aware build (Linux only)
+make numa-optimized
+
+# Parallel build with OpenMP and performance features
+make optimized OMP=1 PERFORMANCE=1 -j$(nproc)
+```
+
+#### Performance Build Targets
+```bash
+make optimized          # Production-optimized build
+make ultra-optimized    # Ultra-optimized (may affect numerical accuracy)
+make numa-optimized     # NUMA-aware build (Linux)
+make validate-arch      # Validate numerical accuracy on target hardware
+make regression-test    # Performance regression testing
+make thread-analysis    # Threading performance analysis
 ```
 
 #### Manual Compilation (No Make)
 ```powershell
-# Windows PowerShell
+# Windows PowerShell (basic)
 g++ -std=c++17 -O3 -march=native -Iinclude src/*.cpp -o bsm.exe
 
-# Linux/macOS
-g++ -std=c++17 -O3 -march=native -Iinclude src/*.cpp -o bsm
+# Linux/macOS (with performance optimizations)
+g++ -std=c++17 -O3 -march=native -mavx2 -mfma -fopenmp -Iinclude src/*.cpp -o bsm -lnuma
 ```
 
 ## 🏃‍♂️ Usage
@@ -100,6 +125,27 @@ g++ -std=c++17 -O3 -march=native -Iinclude src/*.cpp -o bsm
 .\build\bin\bsm.exe    # Windows
 
 # Expected output: Comparison of BS, MC, PDE, and SLV prices
+```
+
+### Performance Runtime Features
+```bash
+# Show architecture information
+./build/bin/bsm --arch-info
+
+# Validate numerical accuracy
+./build/bin/bsm --validate-accuracy
+
+# Run comprehensive benchmark suite
+./build/bin/bsm --benchmark-suite
+
+# Quick performance test
+./build/bin/bsm --quick-benchmark
+
+# Set thread count
+./build/bin/bsm --threads 8
+
+# Set Monte Carlo paths
+./build/bin/bsm --paths 1000000
 ```
 
 ### Basic API Usage
@@ -175,17 +221,59 @@ void test_new_feature() {
 
 ## 🔧 Configuration and Optimization
 
-### Compiler Optimizations
-```makefile
-# Enable all optimizations
-make CXXFLAGS="-std=c++17 -O3 -march=native -DNDEBUG"
+### Performance Build Configuration
+```bash
+# Production optimized build
+make optimized
 
-# Debug build
-make CXXFLAGS="-std=c++17 -O0 -g -Wall -Wextra"
+# Ultra-optimized build (use with caution for numerical accuracy)
+make ultra-optimized
 
-# Profile-guided optimization (GCC)
-make CXXFLAGS="-std=c++17 -O3 -march=native -fprofile-generate"
-# Run representative workload, then:
+# NUMA-aware build (Linux)
+make numa-optimized
+
+# Enable specific optimizations
+make OMP=1 PERFORMANCE=1 AVX=1 NUMA=1
+```
+
+### Build Options
+```bash
+make DEBUG=1           # Debug build with symbols
+make OMP=1             # Enable OpenMP parallelization
+make PERFORMANCE=1     # Enable performance utilities
+make NUMA=1            # Enable NUMA optimizations (Linux)
+make AVX=1             # Enable AVX/AVX2 vectorization
+make FAST_MATH=1       # Enable fast math (use with caution)
+make ARCH_NATIVE=0     # Disable native architecture targeting
+```
+
+### Runtime Performance Tuning
+```bash
+# Set OpenMP thread count
+export OMP_NUM_THREADS=8
+
+# Set CPU affinity (Linux)
+taskset -c 0-7 ./build/bin/bsm
+
+# NUMA policy (Linux)
+numactl --cpunodebind=0 --membind=0 ./build/bin/bsm
+```
+
+### Validation and Testing
+```bash
+# Test performance optimizations
+./test_performance.sh    # Linux/macOS
+./test_performance.bat   # Windows
+
+# Validate numerical accuracy
+make validate-arch
+
+# Performance regression testing
+make regression-test
+
+# Threading analysis
+make thread-analysis
+```
 make clean && make CXXFLAGS="-std=c++17 -O3 -march=native -fprofile-use"
 ```
 
@@ -204,6 +292,35 @@ OMP_NUM_THREADS=8 ./build/bin/bsm
 // - Batch processing for memory-bound workloads
 // - Streaming random number generation  
 // - NUMA-aware memory allocation for HPC
+// - Hardware-specific optimization recommendations
+// - Performance regression monitoring
+```
+
+### Performance Utilities API
+```cpp
+#include "performance_utils.hpp"
+
+// Detect architecture and get optimization recommendations
+auto arch_info = bsm::performance::ArchitectureOptimizer::detect_architecture();
+auto recommendations = bsm::performance::ArchitectureOptimizer::get_optimization_recommendations();
+
+// Validate numerical accuracy
+bool accuracy_ok = bsm::performance::ArchitectureOptimizer::validate_numerical_accuracy();
+
+// Memory profiling
+bsm::performance::MemoryProfiler::start_profiling();
+// ... run computation ...
+auto memory_profile = bsm::performance::MemoryProfiler::stop_profiling();
+
+// Benchmarking with RAII timing
+{
+    BENCHMARK_SCOPE("Monte Carlo Pricing");
+    auto result = mc_gbm_price(/* parameters */);
+}
+
+// Threading optimization
+auto thread_config = bsm::performance::ThreadManager::initialize_threading();
+bsm::performance::ThreadManager::set_cpu_affinity({0, 1, 2, 3});
 ```
 
 ## 🔬 Mathematical Models

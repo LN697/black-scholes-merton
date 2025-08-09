@@ -14,7 +14,7 @@
  * - Correlated random variable generation
  * - Fast mathematical approximations
  * 
- * @author Black-Scholes-Merton Pricing Toolkit
+ * @author LN697
  * @version 1.0
  */
 
