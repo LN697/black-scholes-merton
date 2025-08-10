@@ -49,7 +49,10 @@ public:
     virtual std::string description() const = 0;
     virtual std::string usage() const = 0;
     virtual int execute(const std::vector<std::string>& args) = 0;
-    virtual std::vector<std::string> get_completions(const std::string& partial) const { return {}; }
+    virtual std::vector<std::string> get_completions(const std::string& partial) const { 
+        (void)partial; // Suppress unused parameter warning
+        return {}; 
+    }
 };
 
 /**

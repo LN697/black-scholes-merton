@@ -547,6 +547,7 @@ std::string PortfolioCommand::usage() const {
 }
 
 int PortfolioCommand::execute(const std::vector<std::string>& args) {
+    (void)args; // Suppress unused parameter warning
     std::cout << "Portfolio analysis feature coming soon!" << std::endl;
     return 0;
 }
@@ -556,6 +557,7 @@ std::string MonteCarloCommand::usage() const {
 }
 
 int MonteCarloCommand::execute(const std::vector<std::string>& args) {
+    (void)args; // Suppress unused parameter warning
     std::cout << "Monte Carlo simulation feature coming soon!" << std::endl;
     return 0;
 }
@@ -565,6 +567,7 @@ std::string VolatilityCommand::usage() const {
 }
 
 int VolatilityCommand::execute(const std::vector<std::string>& args) {
+    (void)args; // Suppress unused parameter warning
     std::cout << "Volatility analysis feature coming soon!" << std::endl;
     return 0;
 }
@@ -574,6 +577,7 @@ std::string ConfigCommand::usage() const {
 }
 
 int ConfigCommand::execute(const std::vector<std::string>& args) {
+    (void)args; // Suppress unused parameter warning
     std::cout << "Configuration management feature coming soon!" << std::endl;
     return 0;
 }
