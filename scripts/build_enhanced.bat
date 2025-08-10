@@ -64,10 +64,9 @@ echo   python scripts\bsm_python_demo.py
 echo.
 
 echo Next steps for UX enhancement:
-echo 1. Integrate enhanced CLI with Makefile
-echo 2. Build Python bindings (pybind11)
-echo 3. Setup web dashboard (React + REST API)
-echo 4. Implement real-time data connections
+echo 1. Build Python bindings (pybind11)
+echo 2. Setup web dashboard (React + REST API)
+echo 3. Implement real-time data connections
 echo.
 
 echo ✓ Build completed successfully!
