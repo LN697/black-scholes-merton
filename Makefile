@@ -12,12 +12,16 @@
 #   make AVX=1             # Enable AVX/AVX2 vectorization
 #   make FAST_MATH=1       # Enable fast math (use with caution)
 #   make ARCH_NATIVE=0     # Disable native architecture targeting
+#   make ENHANCED_CLI=1    # Enable enhanced CLI interface
 #
 # Targets:
 #   make                   # Standard build
 #   make optimized         # Production-optimized build
 #   make ultra-optimized   # Ultra-optimized build (numerical accuracy risk)
 #   make numa-optimized    # NUMA-aware optimized build (Linux)
+#   make enhanced          # Enhanced CLI interface build
+#   make enhanced-optimized # Optimized build with enhanced CLI
+#   make enhanced-full     # Full-featured enhanced CLI build
 #   make test              # Build and run tests
 #   make benchmark         # Run performance benchmarks
 #   make validate-arch     # Validate numerical accuracy on architecture
@@ -43,10 +47,17 @@ NUMA ?= 0
 AVX ?= 0
 FAST_MATH ?= 0
 ARCH_NATIVE ?= 1
+ENHANCED_CLI ?= 0
 
 # Base compiler flags
 CXXFLAGS_BASE := -std=c++17 -Wall -Wextra -Wpedantic
 INCLUDES := -Iinclude
+
+# Enhanced CLI support
+ifeq ($(ENHANCED_CLI),1)
+    CXXFLAGS_BASE += -DWITH_ENHANCED_CLI
+    INCLUDES += -Iui
+endif
 
 # Optimization flags
 ifeq ($(DEBUG),1)
@@ -145,8 +156,16 @@ TEST_BIN := $(BIN_DIR)/tests
 
 # Sources and objects
 SRCS := $(filter-out $(SRC_DIR)/tests.cpp,$(wildcard $(SRC_DIR)/*.cpp))
-TEST_SRCS := $(wildcard $(TEST_DIR)/*.cpp)
 OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
+
+# Add enhanced CLI sources when enabled
+ifeq ($(ENHANCED_CLI),1)
+    # Remove regular main object and add enhanced CLI objects
+    OBJS := $(filter-out $(OBJ_DIR)/main.o,$(OBJS))
+    OBJS += $(OBJ_DIR)/enhanced_cli.o $(OBJ_DIR)/main_enhanced.o
+endif
+
+TEST_SRCS := $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJS := $(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(TEST_SRCS))
 
 # Header dependencies
@@ -175,6 +194,17 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) | $(OBJ_DIR)
 $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp $(HEADERS) | $(OBJ_DIR)
 	@echo "Compiling $<..."
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Enhanced CLI compilation rules
+ifeq ($(ENHANCED_CLI),1)
+$(OBJ_DIR)/enhanced_cli.o: ui/cli/enhanced_cli.cpp $(HEADERS) | $(OBJ_DIR)
+	@echo "Compiling enhanced CLI..."
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/main_enhanced.o: ui/main_enhanced.cpp $(HEADERS) | $(OBJ_DIR)
+	@echo "Compiling enhanced main..."
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+endif
 
 # Directory creation
 $(BIN_DIR) $(OBJ_DIR):
@@ -227,6 +257,22 @@ ultra-optimized:
 numa-optimized:
 	@echo "Building NUMA-optimized version..."
 	@$(MAKE) clean && $(MAKE) OMP=1 PERFORMANCE=1 NUMA=1 ARCH_NATIVE=1
+
+# Enhanced CLI builds
+.PHONY: enhanced
+enhanced:
+	@echo "Building with enhanced CLI interface..."
+	@$(MAKE) clean && $(MAKE) ENHANCED_CLI=1
+
+.PHONY: enhanced-optimized
+enhanced-optimized:
+	@echo "Building optimized version with enhanced CLI..."
+	@$(MAKE) clean && $(MAKE) ENHANCED_CLI=1 OMP=1 PERFORMANCE=1 ARCH_NATIVE=1
+
+.PHONY: enhanced-full
+enhanced-full:
+	@echo "Building full-featured enhanced CLI version..."
+	@$(MAKE) clean && $(MAKE) ENHANCED_CLI=1 OMP=1 PERFORMANCE=1 ARCH_NATIVE=1 AVX=1
 
 # Architecture validation
 .PHONY: validate-arch
@@ -450,6 +496,9 @@ help:
 	@echo "  optimized         Production-optimized build"
 	@echo "  ultra-optimized   Ultra-optimized build (numerical accuracy risk)"
 	@echo "  numa-optimized    NUMA-aware optimized build (Linux)"
+	@echo "  enhanced          Enhanced CLI interface build"
+	@echo "  enhanced-optimized Optimized build with enhanced CLI"
+	@echo "  enhanced-full     Full-featured enhanced CLI build"
 	@echo "  validate-arch     Validate numerical accuracy on architecture"
 	@echo "  regression-test   Run performance regression tests"
 	@echo "  thread-analysis   Analyze threading performance scaling"

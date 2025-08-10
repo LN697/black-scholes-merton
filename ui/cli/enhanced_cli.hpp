@@ -5,6 +5,7 @@
 #include <memory>
 #include <functional>
 #include <map>
+#include <chrono>
 
 namespace bsm::ui {
 

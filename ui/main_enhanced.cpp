@@ -1,4 +1,4 @@
-#include "ui/cli/enhanced_cli.hpp"
+#include "cli/enhanced_cli.hpp"
 #include <iostream>
 
 /**

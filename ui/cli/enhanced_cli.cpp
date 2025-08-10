@@ -359,6 +359,22 @@ int PriceCommand::execute(const std::vector<std::string>& args) {
     return 0;
 }
 
+std::vector<std::string> PriceCommand::get_completions(const std::string& partial) const {
+    std::vector<std::string> completions;
+    std::vector<std::string> options = {
+        "--spot", "--strike", "--rate", "--time", "--vol", "--type", 
+        "--format", "--precision", "--greeks"
+    };
+    
+    for (const auto& option : options) {
+        if (option.find(partial) == 0) {
+            completions.push_back(option);
+        }
+    }
+    
+    return completions;
+}
+
 // ArgumentParser Implementation
 void ArgumentParser::parse(const std::vector<std::string>& args) {
     for (size_t i = 0; i < args.size(); ++i) {
