@@ -145,6 +145,20 @@ make regression-test    # Performance regression testing
 make thread-analysis    # Threading performance analysis
 ```
 
+#### Enhanced CLI Interface
+```bash
+# Build with professional CLI interface
+make enhanced           # Enhanced CLI with table-formatted output
+make enhanced-optimized # Optimized build with enhanced CLI
+make enhanced-full      # Full-featured enhanced CLI with all optimizations
+
+# Enhanced CLI usage examples
+./bsm --help           # Show all available commands
+./bsm price --spot 100 --strike 105 --rate 0.05 --time 0.25 --vol 0.2 --type call
+./bsm price --spot 100 --strike 105 --rate 0.05 --time 0.25 --vol 0.2 --type call --greeks
+./bsm --interactive    # Start interactive mode
+```
+
 #### Manual Compilation (No Make)
 ```powershell
 # Windows PowerShell (basic)

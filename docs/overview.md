@@ -13,13 +13,19 @@ This document provides a comprehensive technical overview of the Black-Scholes-M
 
 ### Core Components Hierarchy
 ```
-Application Layer (main.cpp)
+Application Layer (main.cpp / enhanced_cli)
+    ├── Enhanced CLI Interface (ui/cli/enhanced_cli.hpp) [NEW]
     ├── Analytics Module (analytic_bs.hpp)
     ├── Monte Carlo Engine (monte_carlo_gbm.hpp)
     ├── PDE Solvers (pde_cn*.hpp)
     ├── SLV Framework (slv.hpp)
     └── Utilities Layer (math_utils.hpp, stats.hpp)
 ```
+
+### User Interface Options
+- **Standard CLI**: Traditional command-line interface for automated scripts
+- **Enhanced CLI**: Professional interface with table formatting, colors, and interactive mode
+- **Library Integration**: Direct C++ API access for embedded applications
 
 ### Memory and Performance Architecture
 - **Stack-allocated structures**: Minimal heap allocations for hot paths

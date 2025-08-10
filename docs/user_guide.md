@@ -24,12 +24,44 @@ cd black-scholes-merton/
 # Build with default settings
 make
 
+# Build with enhanced CLI interface (recommended)
+make enhanced
+
 # Run the demo
 ./build/release/bin/bsm
 
 # Run tests
 make test
 ```
+
+### Interface Options
+
+The toolkit provides two interface options:
+
+#### Standard Interface
+```bash
+# Build standard interface
+make
+
+# Runs comprehensive demo with all pricing methods
+./build/release/bin/bsm
+```
+
+#### Enhanced CLI Interface (Recommended)
+```bash
+# Build enhanced CLI
+make enhanced
+
+# Professional command-line interface
+./bsm --help                    # Show available commands
+./bsm price --help              # Help for specific command
+./bsm --interactive             # Start interactive mode
+
+# Example: Price a call option with Greeks
+./bsm price --spot 100 --strike 105 --rate 0.05 --time 0.25 --vol 0.2 --type call --greeks
+```
+
+For detailed enhanced CLI documentation, see [Enhanced CLI Guide](enhanced_cli_guide.md).
 
 ### First Run
 
