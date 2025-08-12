@@ -40,22 +40,15 @@
 namespace bsm {
 namespace performance {
 
-// Static variables for profiling
 static std::chrono::high_resolution_clock::time_point profiling_start;
 static size_t initial_memory = 0;
 static bool profiling_active = false;
 
-//==============================================================================
-// ArchitectureOptimizer Implementation
-//==============================================================================
-
 ArchitectureInfo ArchitectureOptimizer::detect_architecture() {
     ArchitectureInfo info = {};
     
-    // Detect CPU brand
     info.cpu_brand = detect_cpu_brand();
     
-    // Detect core counts
     info.num_physical_cores = std::thread::hardware_concurrency();
     info.num_logical_cores = info.num_physical_cores;
     
@@ -64,7 +57,6 @@ ArchitectureInfo ArchitectureOptimizer::detect_architecture() {
     GetSystemInfo(&sysinfo);
     info.num_logical_cores = sysinfo.dwNumberOfProcessors;
     
-    // Try to get physical cores (simplified approach)
     DWORD length = 0;
     GetLogicalProcessorInformation(nullptr, &length);
     if (length > 0) {
@@ -80,7 +72,6 @@ ArchitectureInfo ArchitectureOptimizer::detect_architecture() {
         }
     }
 #elif defined(__linux__)
-    // Read from /proc/cpuinfo
     std::ifstream cpuinfo("/proc/cpuinfo");
     std::string line;
     int physical_cores = 0;
@@ -102,16 +93,10 @@ ArchitectureInfo ArchitectureOptimizer::detect_architecture() {
     }
 #endif
 
-    // Detect cache information
     detect_cache_info(info);
-    
-    // Detect instruction set support
     detect_instruction_sets(info);
-    
-    // Detect NUMA topology
     detect_numa_topology(info);
     
-    // Compiler version
 #ifdef __GNUC__
     info.compiler_version = "GCC " + std::to_string(__GNUC__) + "." + 
                            std::to_string(__GNUC_MINOR__) + "." + 
@@ -131,19 +116,15 @@ ArchitectureInfo ArchitectureOptimizer::detect_architecture() {
 std::vector<std::string> ArchitectureOptimizer::get_optimal_compiler_flags() {
     std::vector<std::string> flags;
     
-    // Base optimization flags
     flags.push_back("-O3");
     flags.push_back("-DNDEBUG");
     flags.push_back("-flto");
     
-    // Architecture-specific optimizations
     auto arch_info = detect_architecture();
     
-    // Target current architecture
     flags.push_back("-march=native");
     flags.push_back("-mtune=native");
     
-    // Vectorization flags
     if (arch_info.has_avx2) {
         flags.push_back("-mavx2");
         flags.push_back("-mfma");
@@ -151,13 +132,11 @@ std::vector<std::string> ArchitectureOptimizer::get_optimal_compiler_flags() {
         flags.push_back("-mavx");
     }
     
-    // Additional optimization flags
     flags.push_back("-ffast-math");
     flags.push_back("-funroll-loops");
     flags.push_back("-fprefetch-loop-arrays");
     flags.push_back("-fomit-frame-pointer");
     
-    // Threading
 #ifdef USE_OPENMP
     flags.push_back("-fopenmp");
 #endif
@@ -166,21 +145,18 @@ std::vector<std::string> ArchitectureOptimizer::get_optimal_compiler_flags() {
 }
 
 bool ArchitectureOptimizer::validate_numerical_accuracy(double tolerance) {
-    // Test basic floating point operations
     const double test_values[] = {1.0, 1e-10, 1e10, M_PI, M_E};
     const size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
     
     for (size_t i = 0; i < num_tests; ++i) {
         double x = test_values[i];
         
-        // Test basic arithmetic
         double sum = x + x;
         double expected_sum = 2.0 * x;
         if (std::abs(sum - expected_sum) > tolerance * expected_sum) {
             return false;
         }
         
-        // Test transcendental functions
         if (x > 0) {
             double log_exp = std::log(std::exp(x));
             if (std::abs(log_exp - x) > tolerance * std::abs(x)) {
@@ -188,7 +164,6 @@ bool ArchitectureOptimizer::validate_numerical_accuracy(double tolerance) {
             }
         }
         
-        // Test trigonometric functions
         double sin_asin = std::sin(std::asin(std::min(x, 1.0)));
         double expected = std::min(x, 1.0);
         if (std::abs(sin_asin - expected) > tolerance * std::abs(expected)) {
@@ -196,19 +171,15 @@ bool ArchitectureOptimizer::validate_numerical_accuracy(double tolerance) {
         }
     }
     
-    // Test numerical stability of critical BSM operations
     double S = 100.0, K = 100.0, r = 0.05, T = 1.0, sigma = 0.2;
     
-    // d1 calculation stability
     double d1 = (std::log(S/K) + (r + 0.5*sigma*sigma)*T) / (sigma*std::sqrt(T));
     
-    // Small perturbation test
     double S_perturbed = S * (1.0 + 1e-12);
     double d1_perturbed = (std::log(S_perturbed/K) + (r + 0.5*sigma*sigma)*T) / (sigma*std::sqrt(T));
     
-    // Check that small changes don't cause catastrophic cancellation
     double relative_change = std::abs(d1_perturbed - d1) / std::abs(d1);
-    if (relative_change > 1e-10) {  // Should be much smaller
+    if (relative_change > 1e-10) {
         return false;
     }
     
@@ -278,11 +249,10 @@ std::string ArchitectureOptimizer::detect_cpu_brand() {
 }
 
 void ArchitectureOptimizer::detect_cache_info(ArchitectureInfo& info) {
-    // Default values
-    info.cache_line_size = 64;  // Common value
-    info.l1_cache_size = 32;    // KB
-    info.l2_cache_size = 256;   // KB
-    info.l3_cache_size = 8192;  // KB
+    info.cache_line_size = 64;
+    info.l1_cache_size = 32;
+    info.l2_cache_size = 256;
+    info.l3_cache_size = 8192;
 
 #ifdef _WIN32
     DWORD buffer_size = 0;
@@ -311,12 +281,10 @@ void ArchitectureOptimizer::detect_cache_info(ArchitectureInfo& info) {
         }
     }
 #elif defined(__linux__)
-    // Read from sysfs
     auto read_cache_size = [](const std::string& path) -> int {
         std::ifstream file(path);
         std::string value;
         if (std::getline(file, value)) {
-            // Remove 'K' suffix if present
             if (!value.empty() && value.back() == 'K') {
                 value.pop_back();
             }
@@ -393,10 +361,6 @@ void ArchitectureOptimizer::detect_numa_topology(ArchitectureInfo& info) {
     }
 #endif
 }
-
-//==============================================================================
-// ThreadManager Implementation
-//==============================================================================
 
 ThreadConfig ThreadManager::initialize_threading() {
     ThreadConfig config = {};
@@ -526,10 +490,6 @@ std::vector<int> ThreadManager::get_optimal_cpu_affinity() {
     
     return affinity;
 }
-
-//==============================================================================
-// MemoryProfiler Implementation  
-//==============================================================================
 
 void MemoryProfiler::start_profiling() {
     profiling_start = std::chrono::high_resolution_clock::now();
@@ -704,9 +664,6 @@ void MemoryProfiler::configure_numa_allocation() {
 }
 
 //==============================================================================
-// PerformanceBenchmark Implementation
-//==============================================================================
-
 std::vector<BenchmarkResult> PerformanceBenchmark::run_benchmark_suite() {
     std::vector<BenchmarkResult> results;
     

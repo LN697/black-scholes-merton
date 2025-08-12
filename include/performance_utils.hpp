@@ -46,18 +46,18 @@ namespace performance {
  * @brief System architecture detection and optimization info
  */
 struct ArchitectureInfo {
-    std::string cpu_brand;           ///< CPU brand and model
-    std::string compiler_version;    ///< Compiler version used
-    int num_physical_cores;         ///< Number of physical CPU cores
-    int num_logical_cores;          ///< Number of logical CPU cores (with HT)
-    int cache_line_size;            ///< CPU cache line size in bytes
-    int l1_cache_size;              ///< L1 cache size in KB
-    int l2_cache_size;              ///< L2 cache size in KB
-    int l3_cache_size;              ///< L3 cache size in KB
-    bool has_avx;                   ///< AVX instruction set support
-    bool has_avx2;                  ///< AVX2 instruction set support
-    bool has_fma;                   ///< FMA instruction set support
-    bool has_numa;                  ///< NUMA architecture support
+    std::string cpu_brand;
+    std::string compiler_version;
+    int num_physical_cores;
+    int num_logical_cores;
+    int cache_line_size;
+    int l1_cache_size;
+    int l2_cache_size;
+    int l3_cache_size;
+    bool has_avx;
+    bool has_avx2;
+    bool has_fma;
+    bool has_numa;
     int numa_nodes;                 ///< Number of NUMA nodes
     std::vector<int> cpu_topology;  ///< CPU topology per NUMA node
 };

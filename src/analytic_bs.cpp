@@ -6,15 +6,12 @@
 namespace bsm {
 
 double black_scholes_price(double S0, double K, double r, double T, double sigma, OptionType type) {
-    // Handle edge cases
     if (T <= 0.0) {
-        // Zero time to expiration: return immediate intrinsic value
         double intrinsic = (type == OptionType::Call) ? std::max(S0 - K, 0.0) : std::max(K - S0, 0.0);
         return intrinsic;
     }
     
     if (sigma <= 0.0) {
-        // Zero volatility: option value is discounted forward intrinsic value
         if (type == OptionType::Call) {
             return std::max(S0 - K * std::exp(-r * T), 0.0);
         } else {
@@ -22,7 +19,6 @@ double black_scholes_price(double S0, double K, double r, double T, double sigma
         }
     }
     
-    // Compute d1 and d2
     const double sqrt_T = std::sqrt(T);
     const double d1 = (std::log(S0 / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * sqrt_T);
     const double d2 = d1 - sigma * sqrt_T;
@@ -36,7 +32,6 @@ double black_scholes_price(double S0, double K, double r, double T, double sigma
 
 double black_scholes_delta(double S0, double K, double r, double T, double sigma, OptionType type) {
     if (sigma <= 0.0 || T <= 0.0) {
-        // For degenerate cases, delta is either 0 or 1 based on moneyness
         if (type == OptionType::Call) {
             return (S0 > K) ? 1.0 : 0.0;
         } else {

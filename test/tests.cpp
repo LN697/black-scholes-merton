@@ -28,6 +28,7 @@
 #include "pde_cn.hpp"
 #include "pde_cn_american.hpp"
 #include "slv.hpp"
+#include "slv_calibration.hpp"
 #include "iv_solve.hpp"
 #include "math_utils.hpp"
 #include "stats.hpp"
@@ -254,6 +255,68 @@ void test_slv_models() {
     } catch (...) {
         std::cout << "[WARNING] SLV test failed with unknown exception" << std::endl;
         test_assert(false, "SLV pricing completes without exceptions");
+    }
+}
+
+/**
+ * @brief Test SLV calibration functionality
+ */
+void test_slv_calibration() {
+    print_section("SLV Calibration");
+
+    try {
+        // Test the calibration components
+        bool calibration_works = validate_slv_calibration();
+        test_assert(calibration_works, "SLV calibration test completes successfully");
+        
+        // Test individual components
+        auto dupire = create_sample_dupire_surface();
+        test_assert(!dupire.t.empty(), "Sample Dupire surface has time points");
+        test_assert(!dupire.S.empty(), "Sample Dupire surface has spot points");
+        test_assert(!dupire.sigma.empty(), "Sample Dupire surface has volatility data");
+        
+        // Validate surface values are reasonable
+        for (size_t i = 0; i < dupire.t.size(); ++i) {
+            for (size_t j = 0; j < dupire.S.size(); ++j) {
+                double vol = dupire.sigma[i][j];
+                test_assert(vol > 0.0 && vol < 2.0, "Dupire surface volatilities are reasonable");
+            }
+        }
+        
+        // Test leverage grid creation
+        auto leverage = create_sample_leverage_grid(dupire);
+        test_assert(leverage.t.size() == dupire.t.size(), "Leverage grid matches Dupire time dimension");
+        test_assert(leverage.S.size() == dupire.S.size(), "Leverage grid matches Dupire spot dimension");
+        
+        // Test interpolation
+        double test_leverage = leverage.interpolate(100.0, 0.5);
+        test_assert(std::isfinite(test_leverage), "Leverage interpolation returns finite values");
+        test_assert(test_leverage > 0.0, "Leverage interpolation returns positive values");
+        
+        // Test calibration with minimal parameters
+        HestonParams heston{2.0, 0.04, 0.3, -0.7, 0.04};
+        calibrate_leverage_iterative(dupire, heston, leverage, 3);
+        
+        // Check leverage values after calibration
+        bool all_leverage_valid = true;
+        for (size_t i = 0; i < leverage.t.size(); ++i) {
+            for (size_t j = 0; j < leverage.S.size(); ++j) {
+                double L = leverage.L[i][j];
+                if (!std::isfinite(L) || L <= 0.0 || L > 10.0) {
+                    all_leverage_valid = false;
+                    break;
+                }
+            }
+            if (!all_leverage_valid) break;
+        }
+        test_assert(all_leverage_valid, "Calibrated leverage values are finite and reasonable");
+        
+    } catch (const std::exception& e) {
+        std::cout << "[WARNING] SLV calibration test failed with exception: " << e.what() << std::endl;
+        test_assert(false, "SLV calibration completes without exceptions");
+    } catch (...) {
+        std::cout << "[WARNING] SLV calibration test failed with unknown exception" << std::endl;
+        test_assert(false, "SLV calibration completes without exceptions");
     }
 }
 
@@ -537,6 +600,7 @@ int main() {
         test_monte_carlo();
         test_pde_pricing();
         test_slv_models();
+        test_slv_calibration();
         test_implied_volatility();
         test_math_utils();
         test_statistics();
