@@ -18,9 +18,9 @@ run_test() {
     echo "Command: $command"
     
     if eval "$command"; then
-        echo "✓ PASSED: $test_name"
+        echo "* PASSED: $test_name"
     else
-        echo "✗ FAILED: $test_name"
+        echo "X FAILED: $test_name"
         return 1
     fi
     echo
@@ -85,28 +85,28 @@ echo "=== Performance Test Summary ==="
 echo "All performance optimization tests completed!"
 echo
 echo "Performance features validated:"
-echo "  ✓ Optimized compiler flags"
-echo "  ✓ Architecture detection and optimization"
-echo "  ✓ Numerical accuracy validation"
-echo "  ✓ Performance benchmarking"
-echo "  ✓ Threading optimization"
-echo "  ✓ Memory profiling"
-echo "  ✓ Regression testing"
+echo "  * Optimized compiler flags"
+echo "  * Architecture detection and optimization"
+echo "  * Numerical accuracy validation"
+echo "  * Performance benchmarking"
+echo "  * Threading optimization"
+echo "  * Memory profiling"
+echo "  * Regression testing"
 echo
 echo "Build targets tested:"
-echo "  ✓ make optimized"
-echo "  ✓ make ultra-optimized"
-echo "  ✓ make regression-test"
-echo "  ✓ make thread-analysis"
+echo "  * make optimized"
+echo "  * make ultra-optimized"
+echo "  * make regression-test"
+echo "  * make thread-analysis"
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    echo "  ✓ make numa-optimized"
+    echo "  * make numa-optimized"
 fi
 echo
 echo "Runtime features tested:"
-echo "  ✓ --arch-info"
-echo "  ✓ --validate-accuracy"
-echo "  ✓ --quick-benchmark"
-echo "  ✓ --benchmark-suite"
+echo "  * --arch-info"
+echo "  * --validate-accuracy"
+echo "  * --quick-benchmark"
+echo "  * --benchmark-suite"
 echo
 echo "Next steps:"
 echo "  1. Use 'make optimized' for production builds"

@@ -63,25 +63,25 @@ if %FAILED_TESTS% EQU 0 (
 )
 echo.
 echo Performance features validated:
-echo   ✓ Optimized compiler flags
-echo   ✓ Architecture detection and optimization
-echo   ✓ Numerical accuracy validation
-echo   ✓ Performance benchmarking
-echo   ✓ Threading optimization
-echo   ✓ Memory profiling
-echo   ✓ Regression testing
+echo   * Optimized compiler flags
+echo   * Architecture detection and optimization
+echo   * Numerical accuracy validation
+echo   * Performance benchmarking
+echo   * Threading optimization
+echo   * Memory profiling
+echo   * Regression testing
 echo.
 echo Build targets tested:
-echo   ✓ make optimized
-echo   ✓ make ultra-optimized
-echo   ✓ make regression-test
-echo   ✓ make thread-analysis
+echo   * make optimized
+echo   * make ultra-optimized
+echo   * make regression-test
+echo   * make thread-analysis
 echo.
 echo Runtime features tested:
-echo   ✓ --arch-info
-echo   ✓ --validate-accuracy
-echo   ✓ --quick-benchmark
-echo   ✓ --benchmark-suite
+echo   * --arch-info
+echo   * --validate-accuracy
+echo   * --quick-benchmark
+echo   * --benchmark-suite
 echo.
 echo Next steps:
 echo   1. Use 'make optimized' for production builds
