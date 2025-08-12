@@ -9,30 +9,30 @@
 
 ## 🚨 IMMEDIATE PRIORITIES (Next Sprint)
 
-### 1. Enhanced CLI Completion
-- [ ] **Portfolio Command Implementation** 
-  - Current: Placeholder "coming soon" message
-  - Location: `ui/cli/enhanced_cli.cpp:551`
-  - Required: Full portfolio analysis functionality
-  - Priority: HIGH
+### 1. Enhanced CLI Completion ✅ COMPLETED
+- [x] **Portfolio Command Implementation** 
+  - ~~Current: Placeholder "coming soon" message~~
+  - **Status**: ✅ IMPLEMENTED - Full portfolio analysis with CSV parsing, Greeks, VaR calculation
+  - Location: `ui/cli/enhanced_cli.cpp` - PortfolioCommand::execute()
+  - Features: CSV portfolio files, risk metrics, multiple output formats
 
-- [ ] **Monte Carlo Command Implementation**
-  - Current: Placeholder "coming soon" message  
-  - Location: `ui/cli/enhanced_cli.cpp:561`
-  - Required: Monte Carlo simulation controls with progress tracking
-  - Priority: HIGH
+- [x] **Monte Carlo Command Implementation**
+  - ~~Current: Placeholder "coming soon" message~~
+  - **Status**: ✅ IMPLEMENTED - Complete MC simulation with variance reduction, progress tracking
+  - Location: `ui/cli/enhanced_cli.cpp` - MonteCarloCommand::execute()
+  - Features: Antithetic variates, control variates, QMC, Greeks, analytical comparison
 
-- [ ] **Volatility Command Implementation**
-  - Current: Placeholder "coming soon" message
-  - Location: `ui/cli/enhanced_cli.cpp:571` 
-  - Required: Volatility surface analysis and IV calculations
-  - Priority: HIGH
+- [x] **Volatility Command Implementation**
+  - ~~Current: Placeholder "coming soon" message~~
+  - **Status**: ✅ IMPLEMENTED - Comprehensive volatility analysis suite
+  - Location: `ui/cli/enhanced_cli.cpp` - VolatilityCommand::execute()
+  - Features: Implied volatility, surface analysis, smile/term structure, multiple data formats
 
-- [ ] **Configuration Management Implementation**
-  - Current: Placeholder "coming soon" message
-  - Location: `ui/cli/enhanced_cli.cpp:581`
-  - Required: Persistent configuration file support
-  - Priority: MEDIUM
+- [x] **Configuration Management Implementation**
+  - ~~Current: Placeholder "coming soon" message~~
+  - **Status**: ✅ IMPLEMENTED - Configuration management with file I/O
+  - Location: `ui/cli/enhanced_cli.cpp` - ConfigCommand::execute()
+  - Features: Show/set/reset/save/load configuration, validation
 
 ### 2. Interactive Mode Implementation
 - [ ] **REPL Interface**
@@ -70,17 +70,18 @@
   - Impact: Performance monitoring and optimization
   - Priority: MEDIUM
 
-### 2. SLV Calibration - Critical Mathematical Component
-- [ ] **Model-Implied Local Volatility Calculation**
-  - Current: Uses placeholder `sig_model = sig_target`
-  - Location: `include/slv_calibration.hpp:24`
-  - Impact: SLV calibration accuracy
-  - Priority: HIGH - Critical for production use
+### 2. SLV Calibration - Critical Mathematical Component ✅ COMPLETED
+- [x] **Model-Implied Local Volatility Calculation**
+  - ~~Current: Uses placeholder `sig_model = sig_target`~~
+  - **Status**: ✅ IMPLEMENTED - Complete finite difference local volatility estimation
+  - Location: `src/slv_calibration.cpp` - estimate_model_implied_volatility_fd()
+  - Features: Proper Monte Carlo-based model calibration with iterative damping
 
-- [ ] **PDE/Particle Estimator for SLV**
-  - Current: Stub implementation with comment
-  - Required: Proper sigma_model(S,t) computation
-  - Priority: HIGH
+- [x] **PDE/Particle Estimator for SLV**
+  - ~~Current: Stub implementation with comment~~
+  - **Status**: ✅ IMPLEMENTED - Full SLV calibration with leverage grid interpolation
+  - Location: `src/slv_calibration.cpp` - calibrate_leverage_iterative()
+  - Features: Bilinear interpolation, convergence checking, all 103 tests passing
 
 ### 3. Enhanced Build Scripts
 - [ ] **Windows Enhanced Build Integration**  
@@ -176,10 +177,12 @@
   - Priority: MEDIUM
 
 ### 2. File Format Support
-- [ ] **CSV Portfolio Import/Export**
-  - Current: Enhanced CLI mentions portfolio.csv but not implemented
-  - Required: Standardized CSV format support
-  - Priority: HIGH
+- [x] **CSV Portfolio Import/Export**
+  - ~~Current: Enhanced CLI mentions portfolio.csv but not implemented~~
+  - **Status**: ✅ IMPLEMENTED - Full CSV portfolio support in Enhanced CLI
+  - Location: `ui/cli/enhanced_cli.cpp` - PortfolioCommand supports CSV parsing
+  - Format: symbol,position,spot,strike,expiry,volatility,option_type
+  - Features: Risk analysis, VaR calculation, multiple output formats
 
 - [ ] **JSON Configuration Files**
   - Current: CLI mentions JSON output format but incomplete

@@ -598,7 +598,7 @@ int PortfolioCommand::execute(const std::vector<std::string>& args) {
     }
     
     // Parse command line arguments
-    std::string portfolio_file = args.back();
+    std::string portfolio_file;
     std::string output_format = "table";
     double risk_free_rate = 0.05;
     double confidence_level = 0.95;
@@ -606,20 +606,29 @@ int PortfolioCommand::execute(const std::vector<std::string>& args) {
     long monte_carlo_paths = 100000;
     std::string correlations_file;
     
-    for (size_t i = 0; i < args.size() - 1; ++i) {
-        if (args[i] == "--output" && i + 1 < args.size() - 1) {
+    for (size_t i = 0; i < args.size(); ++i) {
+        if (args[i] == "--file" && i + 1 < args.size()) {
+            portfolio_file = args[++i];
+        } else if (args[i] == "--output" && i + 1 < args.size()) {
             output_format = args[++i];
-        } else if (args[i] == "--risk-free" && i + 1 < args.size() - 1) {
+        } else if (args[i] == "--rate" && i + 1 < args.size()) {
             risk_free_rate = std::stod(args[++i]);
-        } else if (args[i] == "--confidence" && i + 1 < args.size() - 1) {
+        } else if (args[i] == "--risk-free" && i + 1 < args.size()) {
+            risk_free_rate = std::stod(args[++i]);
+        } else if (args[i] == "--confidence" && i + 1 < args.size()) {
             confidence_level = std::stod(args[++i]);
-        } else if (args[i] == "--time-horizon" && i + 1 < args.size() - 1) {
+        } else if (args[i] == "--time-horizon" && i + 1 < args.size()) {
             time_horizon = std::stoi(args[++i]);
-        } else if (args[i] == "--monte-carlo" && i + 1 < args.size() - 1) {
+        } else if (args[i] == "--monte-carlo" && i + 1 < args.size()) {
             monte_carlo_paths = std::stol(args[++i]);
-        } else if (args[i] == "--correlations" && i + 1 < args.size() - 1) {
+        } else if (args[i] == "--correlations" && i + 1 < args.size()) {
             correlations_file = args[++i];
         }
+    }
+    
+    if (portfolio_file.empty()) {
+        std::cout << "Error: Portfolio file required. Use --file <filename>" << std::endl;
+        return 1;
     }
     
     // Load portfolio from file
