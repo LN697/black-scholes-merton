@@ -182,19 +182,19 @@ void EnhancedCLI::print_version() const {
 }
 
 void EnhancedCLI::print_success(const std::string& message) const {
-    std::cout << colorize("✓ ", colors::GREEN) << message << std::endl;
+    std::cout << colorize("* ", colors::GREEN) << message << std::endl;
 }
 
 void EnhancedCLI::print_error(const std::string& message) const {
-    std::cerr << colorize("✗ Error: ", colors::RED) << message << std::endl;
+    std::cerr << colorize("ERROR: ", colors::RED) << message << std::endl;
 }
 
 void EnhancedCLI::print_warning(const std::string& message) const {
-    std::cout << colorize("⚠ Warning: ", colors::YELLOW) << message << std::endl;
+    std::cout << colorize("WARNING: ", colors::YELLOW) << message << std::endl;
 }
 
 void EnhancedCLI::print_info(const std::string& message) const {
-    std::cout << colorize("ℹ ", colors::BLUE) << message << std::endl;
+    std::cout << colorize("INFO: ", colors::BLUE) << message << std::endl;
 }
 
 void EnhancedCLI::print_progress_bar(double percentage, const std::string& label) const {
@@ -208,9 +208,9 @@ void EnhancedCLI::print_progress_bar(double percentage, const std::string& label
     
     for (int i = 0; i < bar_width; ++i) {
         if (i < filled) {
-            std::cout << colorize("█", colors::GREEN);
+            std::cout << colorize("#", colors::GREEN);
         } else {
-            std::cout << colorize("░", colors::WHITE);
+            std::cout << colorize("-", colors::WHITE);
         }
     }
     
@@ -745,7 +745,7 @@ int PortfolioCommand::execute(const std::vector<std::string>& args) {
         std::cout << "num_positions," << summary.num_positions << "\n";
     } else {
         // Table format (default)
-        std::cout << "\n" << colors::BLUE << "═══ Portfolio Analysis ═══" << colors::RESET << "\n\n";
+        std::cout << "\n" << colors::BLUE << "=== Portfolio Analysis ===" << colors::RESET << "\n\n";
         
         std::cout << std::left << std::setw(12) << "Symbol" 
                   << std::right << std::setw(10) << "Position"
@@ -791,7 +791,7 @@ int PortfolioCommand::execute(const std::vector<std::string>& args) {
 
 // Monte Carlo simulation implementation
 std::string MonteCarloCommand::usage() const {
-    return "montecarlo [options] --spot <S> --strike <K> --rate <r> --time <T> --volatility <σ>\n"
+    return "montecarlo [options] --spot <S> --strike <K> --rate <r> --time <T> --volatility <vol>\n"
            "  Options:\n"
            "    --paths <n>           Number of simulation paths (default: 100000)\n"
            "    --steps <n>           Number of time steps per path (default: 252)\n"
@@ -965,14 +965,14 @@ int MonteCarloCommand::execute(const std::vector<std::string>& args) {
             }
         } else {
             // Table format (default)
-            std::cout << "\n" << colors::BLUE << "═══ Monte Carlo Simulation Results ═══" << colors::RESET << "\n\n";
+            std::cout << "\n" << colors::BLUE << "=== Monte Carlo Simulation Results ===" << colors::RESET << "\n\n";
             
             std::cout << "Simulation Parameters:\n";
-            std::cout << "  Spot Price (S₀):     " << S0 << "\n";
+            std::cout << "  Spot Price (S0):     " << S0 << "\n";
             std::cout << "  Strike Price (K):    " << K << "\n";
             std::cout << "  Risk-free Rate (r):  " << (r * 100) << "%\n";
             std::cout << "  Time to Expiry (T):  " << T << " years\n";
-            std::cout << "  Volatility (σ):      " << (sigma * 100) << "%\n";
+            std::cout << "  Volatility (vol):    " << (sigma * 100) << "%\n";
             std::cout << "  Option Type:         " << ((option_type == OptionType::Call) ? "Call" : "Put") << "\n";
             std::cout << "  Number of Paths:     " << num_paths << "\n";
             std::cout << "  Time Steps:          " << num_steps << "\n";
@@ -992,9 +992,9 @@ int MonteCarloCommand::execute(const std::vector<std::string>& args) {
             if (calculate_greeks) {
                 std::cout << "\n" << colors::YELLOW << "Greeks:" << colors::RESET << "\n";
                 std::cout << "  Delta:               " << std::setprecision(4) << mc_result.delta 
-                          << " (±" << mc_result.delta_se << ")\n";
+                          << " (+/-" << mc_result.delta_se << ")\n";
                 std::cout << "  Vega:                " << std::setprecision(2) << mc_result.vega 
-                          << " (±" << mc_result.vega_se << ")\n";
+                          << " (+/-" << mc_result.vega_se << ")\n";
             }
             
             if (compare_analytical) {
@@ -1032,8 +1032,8 @@ std::string VolatilityCommand::usage() const {
            "  Modes:\n"
            "    implied --price <p> --spot <S> --strike <K> --rate <r> --time <T> --type <call|put>\n"
            "    surface --file <csv_file> [--output <format>]\n"
-           "    smile --spot <S> --time <T> --strikes <K1,K2,...> --ivs <σ1,σ2,...>\n"
-           "    term-structure --spot <S> --strike <K> --times <T1,T2,...> --ivs <σ1,σ2,...>\n"
+           "    smile --spot <S> --time <T> --strikes <K1,K2,...> --ivs <v1,v2,...>\n"
+           "    term-structure --spot <S> --strike <K> --times <T1,T2,...> --ivs <v1,v2,...>\n"
            "  \n"
            "  Options:\n"
            "    --tolerance <tol>     Solver tolerance (default: 1e-6)\n"
@@ -1148,7 +1148,7 @@ int VolatilityCommand::execute_implied_volatility(const std::vector<std::string>
             std::cout << "computed_price," << computed_price << "\n";
             std::cout << "price_error," << price_error << "\n";
         } else {
-            std::cout << "\n" << colors::BLUE << "═══ Implied Volatility Analysis ═══" << colors::RESET << "\n\n";
+            std::cout << "\n" << colors::BLUE << "=== Implied Volatility Analysis ===" << colors::RESET << "\n\n";
             std::cout << "Input Parameters:\n";
             std::cout << "  Market Price:        " << market_price << "\n";
             std::cout << "  Spot Price:          " << S0 << "\n";
@@ -1266,7 +1266,7 @@ int VolatilityCommand::execute_volatility_surface(const std::vector<std::string>
                           << "," << point.market_price << "," << moneyness << "\n";
             }
         } else {
-            std::cout << "\n" << colors::BLUE << "═══ Volatility Surface Analysis ═══" << colors::RESET << "\n\n";
+            std::cout << "\n" << colors::BLUE << "=== Volatility Surface Analysis ===" << colors::RESET << "\n\n";
             std::cout << "Data Points: " << surface_points.size() << "\n\n";
             
             std::cout << std::setw(8) << "Strike" << std::setw(8) << "Expiry" 
@@ -1371,7 +1371,7 @@ int VolatilityCommand::execute_volatility_smile(const std::vector<std::string>& 
                 std::cout << strikes[i] << "," << moneyness << "," << implied_vols[i] << "\n";
             }
         } else {
-            std::cout << "\n" << colors::BLUE << "═══ Volatility Smile Analysis ═══" << colors::RESET << "\n\n";
+            std::cout << "\n" << colors::BLUE << "=== Volatility Smile Analysis ===" << colors::RESET << "\n\n";
             std::cout << "Spot Price: " << S0 << "\n";
             std::cout << "Expiry: " << T << " years\n\n";
             
@@ -1465,7 +1465,7 @@ int VolatilityCommand::execute_term_structure(const std::vector<std::string>& ar
                 std::cout << times[i] << "," << implied_vols[i] << "\n";
             }
         } else {
-            std::cout << "\n" << colors::BLUE << "═══ Volatility Term Structure Analysis ═══" << colors::RESET << "\n\n";
+            std::cout << "\n" << colors::BLUE << "=== Volatility Term Structure Analysis ===" << colors::RESET << "\n\n";
             std::cout << "Spot Price: " << S0 << "\n";
             std::cout << "Strike Price: " << K << "\n";
             std::cout << "Moneyness: " << std::fixed << std::setprecision(3) << moneyness << "\n\n";
@@ -1539,7 +1539,7 @@ int ConfigCommand::execute(const std::vector<std::string>& args) {
 }
 
 int ConfigCommand::show_config() {
-    std::cout << "\n" << colors::BLUE << "═══ Current Configuration ═══" << colors::RESET << "\n\n";
+    std::cout << "\n" << colors::BLUE << "=== Current Configuration ===" << colors::RESET << "\n\n";
     
     // Get current config from CLI instance (we'll use a static default for now)
     std::cout << colors::GREEN << "Output Settings:" << colors::RESET << "\n";
@@ -1598,7 +1598,7 @@ int ConfigCommand::set_config(const std::string& key, const std::string& value) 
     }
     
     // In a real implementation, this would update the actual config
-    std::cout << colors::GREEN << "✓" << colors::RESET << " Configuration updated: " 
+    std::cout << colors::GREEN << "*" << colors::RESET << " Configuration updated: " 
               << key << " = " << value << std::endl;
     
     return 0;
@@ -1608,7 +1608,7 @@ int ConfigCommand::reset_config() {
     std::cout << colors::YELLOW << "Resetting configuration to defaults..." << colors::RESET << std::endl;
     
     // In a real implementation, this would reset the actual config
-    std::cout << colors::GREEN << "✓" << colors::RESET << " Configuration reset to defaults" << std::endl;
+    std::cout << colors::GREEN << "*" << colors::RESET << " Configuration reset to defaults" << std::endl;
     
     return 0;
 }
@@ -1632,7 +1632,7 @@ int ConfigCommand::save_config(const std::string& filename) {
         file << "  \"log_level\": \"INFO\"\n";
         file << "}\n";
         
-        std::cout << colors::GREEN << "✓" << colors::RESET << " Configuration saved to '" 
+        std::cout << colors::GREEN << "*" << colors::RESET << " Configuration saved to '" 
                   << filename << "'" << std::endl;
         
         return 0;
@@ -1653,7 +1653,7 @@ int ConfigCommand::load_config(const std::string& filename) {
         
         // In a real implementation, this would parse JSON and update config
         std::cout << colors::YELLOW << "Loading configuration from '" << filename << "'..." << colors::RESET << std::endl;
-        std::cout << colors::GREEN << "✓" << colors::RESET << " Configuration loaded successfully" << std::endl;
+        std::cout << colors::GREEN << "*" << colors::RESET << " Configuration loaded successfully" << std::endl;
         
         return 0;
         
