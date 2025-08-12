@@ -6,6 +6,7 @@
 #include <functional>
 #include <map>
 #include <chrono>
+#include "option_types.hpp"
 
 namespace bsm::ui {
 
@@ -141,6 +142,22 @@ public:
     std::string description() const override { return "Analyze volatility surfaces and implied volatility"; }
     std::string usage() const override;
     int execute(const std::vector<std::string>& args) override;
+
+private:
+    struct SurfacePoint {
+        double strike;
+        double expiry;
+        double market_price;
+        double spot;
+        double rate;
+        OptionType option_type;
+        double implied_vol;
+    };
+    
+    int execute_implied_volatility(const std::vector<std::string>& args);
+    int execute_volatility_surface(const std::vector<std::string>& args);
+    int execute_volatility_smile(const std::vector<std::string>& args);
+    int execute_term_structure(const std::vector<std::string>& args);
 };
 
 /**
@@ -152,6 +169,13 @@ public:
     std::string description() const override { return "Manage CLI configuration settings"; }
     std::string usage() const override;
     int execute(const std::vector<std::string>& args) override;
+
+private:
+    int show_config();
+    int set_config(const std::string& key, const std::string& value);
+    int reset_config();
+    int save_config(const std::string& filename);
+    int load_config(const std::string& filename);
 };
 
 /**
