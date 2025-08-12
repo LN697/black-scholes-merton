@@ -1,21 +1,3 @@
-/**
- * @file main.cpp
- * @brief Black-Scholes-Merton Pricing Toolkit Demo Application
- * 
- * This application demonstrates the capabilities of the BSM pricing toolkit
- * by comparing different pricing methods on a standard European option.
- * 
- * Features demonstrated:
- * - Analytical Black-Scholes pricing with Greeks
- * - Monte Carlo simulation with variance reduction
- * - PDE finite difference methods
- * - Stochastic Local Volatility (SLV) models
- * - Performance timing and statistical analysis
- * 
- * @author Black-Scholes-Merton Pricing Toolkit
- * @version 1.0
- */
-
 #include <iostream>
 #include <vector>
 #include <iomanip>
@@ -43,39 +25,30 @@
 namespace {
     using namespace bsm;
 
-    /**
-     * @brief Configuration structure for demo parameters
-     */
     struct DemoConfig {
-        // Basic option parameters
-        double S0 = 100.0;           ///< Current spot price
-        double K = 100.0;            ///< Strike price
-        double r = 0.05;             ///< Risk-free rate
-        double T = 1.0;              ///< Time to expiration (years)
-        double sigma = 0.20;         ///< Volatility
-        OptionType type = OptionType::Call;  ///< Option type
+        double S0 = 100.0;
+        double K = 100.0;
+        double r = 0.05;
+        double T = 1.0;
+        double sigma = 0.20;
+        OptionType type = OptionType::Call;
 
-        // Simulation parameters
-        long mc_paths = 500000;      ///< MC simulation paths
-        int pde_S_steps = 300;       ///< PDE spatial steps
-        int pde_T_steps = 150;       ///< PDE time steps
-        long slv_paths = 300000;     ///< SLV simulation paths
-        long slv_steps = 252;        ///< SLV time steps (daily)
-        int num_slv_seeds = 5;       ///< Number of SLV seed runs
+        long mc_paths = 500000;
+        int pde_S_steps = 300;
+        int pde_T_steps = 150;
+        long slv_paths = 300000;
+        long slv_steps = 252;
+        int num_slv_seeds = 5;
 
-        // Model configuration flags
-        bool use_smile_local_vol = true;    ///< Use Smile vs CEV local vol
-        bool use_gbm_qmc = true;            ///< Use QMC in GBM MC
-        bool use_gbm_cv = true;             ///< Use control variates in GBM
-        bool use_andersen_qe = true;        ///< Use Andersen QE in SLV
-        bool compute_greeks = true;         ///< Compute Greeks in MC
-        bool show_timing = true;            ///< Show timing information
-        bool verbose_output = true;         ///< Detailed output
+        bool use_smile_local_vol = true;
+        bool use_gbm_qmc = true;
+        bool use_gbm_cv = true;
+        bool use_andersen_qe = true;
+        bool compute_greeks = true;
+        bool show_timing = true;
+        bool verbose_output = true;
     };
 
-    /**
-     * @brief High-resolution timer for performance measurement
-     */
     class Timer {
     private:
         std::chrono::high_resolution_clock::time_point start_time;
@@ -88,7 +61,7 @@ namespace {
         double elapsed_ms() const {
             auto end_time = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-            return duration.count() / 1000.0;  // Convert to milliseconds
+            return duration.count() / 1000.0;
         }
     };
 

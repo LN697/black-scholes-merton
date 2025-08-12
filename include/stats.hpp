@@ -26,43 +26,18 @@ namespace bsm {
  * and Greeks (sensitivities) when computed.
  */
 struct MCResult {
-    /// Option price estimate
     double price{0.0};
-    
-    /// Standard error of the price estimate
     double std_error{0.0}; 
-    
-    /// Delta: sensitivity to underlying price (∂Price/∂S₀)
     double delta{0.0};
-    
-    /// Standard error of delta estimate
     double delta_se{0.0};
-    
-    /// Vega: sensitivity to volatility (∂Price/∂σ)
     double vega{0.0};
-    
-    /// Standard error of vega estimate
     double vega_se{0.0};
-    
-    /// Gamma: second-order sensitivity to underlying (∂²Price/∂S₀²)
     double gamma{0.0};
-    
-    /// Standard error of gamma estimate  
     double gamma_se{0.0};
-    
-    /// Theta: time decay (∂Price/∂T)
     double theta{0.0};
-    
-    /// Standard error of theta estimate
     double theta_se{0.0};
-    
-    /// Number of paths used in simulation
     long num_paths{0};
-    
-    /// Number of time steps per path
     long num_steps{0};
-    
-    /// Random seed used for reproducibility
     unsigned long seed{0};
     
     /**
@@ -94,13 +69,6 @@ struct MCResult {
     }
 };
 
-/**
- * @brief Compute sample mean of a vector
- * @param x Input vector
- * @return Sample mean
- * @par Complexity: O(n)
- * @par Thread Safety: Yes (read-only)
- */
 inline double mean(const std::vector<double>& x) {
     if (x.empty()) return 0.0;
     const double sum = std::accumulate(x.begin(), x.end(), 0.0);
@@ -273,4 +241,4 @@ inline MCResult combine_mc_results(const std::vector<MCResult>& results) {
     return combined;
 }
 
-} // namespace bsm
+}
