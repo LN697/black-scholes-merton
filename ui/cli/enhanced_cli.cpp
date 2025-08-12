@@ -699,6 +699,9 @@ int PortfolioCommand::execute(const std::vector<std::string>& args) {
     }
     
     // Simple VaR calculation (assumes normal distribution)
+    // Note: monte_carlo_paths available for future Monte Carlo VaR enhancement
+    (void)monte_carlo_paths; // Suppress warning for now
+    
     double portfolio_volatility = 0.0;
     for (const auto& pos : positions) {
         double pos_volatility = std::abs(pos.delta * pos.spot_price * pos.volatility);
@@ -707,9 +710,12 @@ int PortfolioCommand::execute(const std::vector<std::string>& args) {
     portfolio_volatility = std::sqrt(portfolio_volatility);
     
     double time_factor = std::sqrt(time_horizon / 365.0);
+    double z_score = (confidence_level == 0.99) ? 2.326 : 
+                     (confidence_level == 0.95) ? 1.645 : 1.282;
     summary.var_95 = 1.645 * portfolio_volatility * time_factor; // 95% VaR
     summary.var_99 = 2.326 * portfolio_volatility * time_factor; // 99% VaR
-    summary.expected_shortfall = summary.var_95 * 1.5; // Simplified ES
+    double var_custom = z_score * portfolio_volatility * time_factor; // Custom confidence level VaR
+    summary.expected_shortfall = var_custom * 1.5; // Simplified ES
     
     // Output results
     if (output_format == "json") {
@@ -769,9 +775,13 @@ int PortfolioCommand::execute(const std::vector<std::string>& args) {
                   << std::setw(10) << std::setprecision(2) << summary.total_vega
                   << std::setw(10) << std::setprecision(2) << summary.total_theta << "\n\n";
         
-        std::cout << colors::YELLOW << "Risk Metrics:" << colors::RESET << "\n";
+        std::cout << "Risk Metrics:" << colors::RESET << "\n";
         std::cout << "  VaR (95%): " << std::fixed << std::setprecision(2) << summary.var_95 << "\n";
         std::cout << "  VaR (99%): " << summary.var_99 << "\n";
+        if (confidence_level != 0.95 && confidence_level != 0.99) {
+            std::cout << "  VaR (" << std::setprecision(1) << (confidence_level * 100) << "%): " 
+                      << std::setprecision(2) << var_custom << "\n";
+        }
         std::cout << "  Expected Shortfall: " << summary.expected_shortfall << "\n";
         std::cout << "  Time Horizon: " << time_horizon << " day(s)\n\n";
     }
@@ -997,6 +1007,8 @@ int MonteCarloCommand::execute(const std::vector<std::string>& args) {
                 if (calculate_greeks) {
                     std::cout << "  Delta Error:         " << std::abs(mc_result.delta - analytical_delta) << "\n";
                     std::cout << "  Vega Error:          " << std::abs(mc_result.vega - analytical_vega) << "\n";
+                    std::cout << "  Analytical Gamma:    " << std::setprecision(4) << analytical_gamma << "\n";
+                    std::cout << "  Analytical Theta:    " << std::setprecision(2) << analytical_theta << "\n";
                 }
             }
             
@@ -1271,6 +1283,15 @@ int VolatilityCommand::execute_volatility_surface(const std::vector<std::string>
                           << std::setprecision(3) << std::setw(10) << moneyness << "\n";
             }
             std::cout << "\n";
+            
+            // Generate plot data if requested
+            if (plot) {
+                std::cout << colors::BLUE << "Plot Data (Strike, Expiry, ImpliedVol):" << colors::RESET << "\n";
+                for (const auto& point : surface_points) {
+                    std::cout << point.strike << "\t" << point.expiry << "\t" << point.implied_vol << "\n";
+                }
+                std::cout << "\n";
+            }
         }
         
         return 0;
