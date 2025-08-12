@@ -1,2 +1,4 @@
-# Ignore build artifacts
 build/
+.gitignore
+.github/
+.vscode/
