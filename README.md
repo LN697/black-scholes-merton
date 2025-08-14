@@ -1,30 +1,4 @@
 # Black-Scholes-Merton Pricing Toolkit
-
-## Development Roadmap & ML/AI Integration
-
-### Machine Learning & AI Enhancements
-- **LSTM Volatility Models**: Deep learning for volatility surface prediction
-- **Physics-Informed Neural Networks (PINNs)**: Neural network PDE solvers
-- **Reinforcement Learning**: Adaptive hedging strategies
-- **Ensemble Methods**: Multiple model averaging for accuracy improvement
-- **Real-time Market Adaptation**: Dynamic model recalibration
-
-### Enhanced User Experience
-- **Professional CLI Interface**: Rich terminal interface with real-time monitoring
-- **Web Dashboard**: React-based professional trading interface
-- **Python Integration**: Seamless Python bindings with pandas/numpy
-- **REST API**: Cloud-ready microservices architecture
-- **WebSocket Streaming**: Real-time market data and pricing updates
-
-### Enterprise Architecture
-- **Microservices**: Containerized pricing services with Docker/Kubernetes
-- **Cloud-Native**: AWS/Azure deployment with auto-scaling
-- **Distributed Computing**: Multi-node cluster processing
-- **Performance Monitoring**: Advanced telemetry and observability
-
-** Full Development Strategy**: See [`dev/`](dev/) directory for complete roadmap, prototypes, and implementation guides.
-
-## Project Structured
  [![Status](https://img.shields.io/badge/build-passing-brightgreen)](README.md)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/std/the-standard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -438,6 +412,29 @@ struct MCResult {
     // ... other sensitivities
 };
 ```
+## Development Roadmap & ML/AI Integration
+
+### Machine Learning & AI Enhancements
+- **LSTM Volatility Models**: Deep learning for volatility surface prediction
+- **Physics-Informed Neural Networks (PINNs)**: Neural network PDE solvers
+- **Reinforcement Learning**: Adaptive hedging strategies
+- **Ensemble Methods**: Multiple model averaging for accuracy improvement
+- **Real-time Market Adaptation**: Dynamic model recalibration
+
+### Enhanced User Experience
+- **Professional CLI Interface**: Rich terminal interface with real-time monitoring
+- **Web Dashboard**: React-based professional trading interface
+- **Python Integration**: Seamless Python bindings with pandas/numpy
+- **REST API**: Cloud-ready microservices architecture
+- **WebSocket Streaming**: Real-time market data and pricing updates
+
+### Enterprise Architecture
+- **Microservices**: Containerized pricing services with Docker/Kubernetes
+- **Cloud-Native**: AWS/Azure deployment with auto-scaling
+- **Distributed Computing**: Multi-node cluster processing
+- **Performance Monitoring**: Advanced telemetry and observability
+
+**Full Development Strategy**: See [`dev/`](dev/) directory for complete roadmap, prototypes, and implementation guides.
 
 ## Next Steps: Enterprise Evolution
 
