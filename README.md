@@ -85,7 +85,7 @@ A high-performance, modular C++17 options pricing library featuring multiple num
 ├── src/                  # Implementation files
 ├── test/                 # Unit tests and validation
 ├── docs/                 # Comprehensive documentation
-├── dev/                  # 🆕 Enterprise development strategy
+├── dev/                  # Enterprise development strategy
 │   ├── research_initiatives/  # ML/AI research and prototypes
 │   ├── prototype_implementations/ # Enhanced interfaces and frameworks
 │   ├── architecture/     # Cloud-native and microservices design
