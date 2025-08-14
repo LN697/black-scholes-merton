@@ -298,8 +298,6 @@ make regression-test
 # Threading analysis
 make thread-analysis
 ```
-make clean && make CXXFLAGS="-std=c++17 -O3 -march=native -fprofile-use"
-```
 
 ### Parallel Computing
 ```bash
