@@ -1,8 +1,5 @@
 # Black-Scholes-Merton Pricing Toolkit
 
-[![- **Profile-guided optimization support
-- Fast math optimizations (optional, with accuracy validation)
-
 ## 🚀 Development Roadmap & ML/AI Integration
 
 ### Machine Learning & AI Enhancements
@@ -27,7 +24,7 @@
 
 **📁 Full Development Strategy**: See [`dev/`](dev/) directory for complete roadmap, prototypes, and implementation guides.
 
-## 📁 Project Structured Status](https://img.shields.io/badge/build-passing-brightgreen)](README.md)
+## 📁 Project Structured [![Status](https://img.shields.io/badge/build-passing-brightgreen)](README.md)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/std/the-standard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Development](https://img.shields.io/badge/development-enterprise--grade-blue)](dev/README.md)
