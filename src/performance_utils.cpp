@@ -16,6 +16,7 @@
 #include <thread>
 #include <random>
 #include <numeric>
+#include <iterator>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -417,10 +418,28 @@ bool ThreadManager::set_numa_policy(int policy, const std::vector<int>& nodes) {
         numa_free_nodemask(nodemask);
         return result == 0;
     }
+#elif defined(_WIN32)
+    // Windows NUMA implementation
+    (void)policy;  // Suppress unused parameter warning
+    HANDLE process = GetCurrentProcess();
+    
+    if (nodes.empty()) {
+        // Set local allocation policy (prefer local node)
+        return SetProcessAffinityMask(process, GetProcessAffinityMask(process, nullptr, nullptr)) != 0;
+    } else {
+        // Set specific NUMA node affinity
+        GROUP_AFFINITY affinity = {};
+        USHORT node_number = static_cast<USHORT>(nodes[0]); // Use first node
+        
+        if (GetNumaNodeProcessorMaskEx(node_number, &affinity)) {
+            return SetThreadGroupAffinity(GetCurrentThread(), &affinity, nullptr) != 0;
+        }
+        return false;
+    }
 #else
     (void)policy;  // Suppress unused parameter warning
     (void)nodes;   // Suppress unused parameter warning
-    return true; // Not implemented, but don't fail
+    return true; // Not implemented for this platform, but don't fail
 #endif
 }
 
@@ -667,9 +686,7 @@ void MemoryProfiler::configure_numa_allocation() {
 std::vector<BenchmarkResult> PerformanceBenchmark::run_benchmark_suite() {
     std::vector<BenchmarkResult> results;
     
-    // Add individual benchmark tests here
-    // This is a placeholder implementation
-    
+    // Memory bandwidth test
     auto memory_test = run_benchmark("Memory Bandwidth", []() {
         const size_t size = 1024 * 1024; // 1M doubles
         std::vector<double> data(size, 1.0);
@@ -679,6 +696,7 @@ std::vector<BenchmarkResult> PerformanceBenchmark::run_benchmark_suite() {
     });
     results.push_back(memory_test);
     
+    // CPU intensive computation test
     auto cpu_test = run_benchmark("CPU Intensive", []() {
         double result = 0.0;
         for (int i = 0; i < 1000000; ++i) {
@@ -688,6 +706,63 @@ std::vector<BenchmarkResult> PerformanceBenchmark::run_benchmark_suite() {
         (void)sink;
     });
     results.push_back(cpu_test);
+    
+    // Cache access pattern test
+    auto cache_test = run_benchmark("Cache Performance", []() {
+        const size_t cache_size = 256 * 1024; // 256KB, typical L2 cache size
+        std::vector<int> data(cache_size / sizeof(int));
+        std::iota(data.begin(), data.end(), 0);
+        
+        // Random access pattern to stress cache
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::shuffle(data.begin(), data.end(), gen);
+        
+        volatile int sum = 0;
+        for (int val : data) {
+            sum += val;
+        }
+        (void)sum;
+    });
+    results.push_back(cache_test);
+    
+    // Floating point operations test
+    auto fp_test = run_benchmark("Floating Point Ops", []() {
+        const int n = 100000;
+        double result = 1.0;
+        for (int i = 0; i < n; ++i) {
+            result = result * 1.00001 + std::sqrt(i + 1.0) - std::log(i + 2.0);
+        }
+        volatile double sink = result;
+        (void)sink;
+    });
+    results.push_back(fp_test);
+    
+    // Vector operations test (SIMD potential)
+    auto vector_test = run_benchmark("Vector Operations", []() {
+        const size_t n = 100000;
+        std::vector<double> a(n, 1.5), b(n, 2.5), c(n);
+        
+        for (size_t i = 0; i < n; ++i) {
+            c[i] = a[i] * b[i] + std::sqrt(a[i]) - b[i] / (a[i] + 1.0);
+        }
+        
+        volatile double sum = std::accumulate(c.begin(), c.end(), 0.0);
+        (void)sum;
+    });
+    results.push_back(vector_test);
+    
+    // Memory allocation/deallocation test
+    auto alloc_test = run_benchmark("Memory Allocation", []() {
+        const int iterations = 1000;
+        for (int i = 0; i < iterations; ++i) {
+            std::vector<double> temp(1024 + i); // Variable size allocation
+            std::fill(temp.begin(), temp.end(), i * 0.001);
+            volatile double sum = temp[0] + temp[temp.size() - 1];
+            (void)sum;
+        }
+    });
+    results.push_back(alloc_test);
     
     return results;
 }
@@ -779,9 +854,67 @@ std::vector<RegressionTracker> PerformanceBenchmark::load_benchmark_history(
     
     std::vector<RegressionTracker> history;
     
-    // This would implement JSON parsing to load historical data
-    // For now, return empty vector
-    (void)filename;  // Suppress unused parameter warning
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        return history; // Return empty if file doesn't exist
+    }
+    
+    // Simple JSON-like parsing for benchmark history
+    // This is a basic implementation that looks for key patterns
+    std::string line;
+    RegressionTracker current_tracker;
+    bool in_results_array = false;
+    
+    while (std::getline(file, line)) {
+        // Remove whitespace
+        line.erase(0, line.find_first_not_of(" \t"));
+        line.erase(line.find_last_not_of(" \t") + 1);
+        
+        if (line.find("\"version\":") != std::string::npos) {
+            size_t start = line.find("\"", line.find(":") + 1) + 1;
+            size_t end = line.find("\"", start);
+            if (start != std::string::npos && end != std::string::npos) {
+                current_tracker.version = line.substr(start, end - start);
+            }
+        } else if (line.find("\"timestamp\":") != std::string::npos) {
+            size_t start = line.find("\"", line.find(":") + 1) + 1;
+            size_t end = line.find("\"", start);
+            if (start != std::string::npos && end != std::string::npos) {
+                // Simple timestamp parsing (just store as epoch time)
+                try {
+                    auto timestamp_str = line.substr(start, end - start);
+                    std::time_t timestamp = std::stoll(timestamp_str);
+                    current_tracker.timestamp = std::chrono::system_clock::from_time_t(timestamp);
+                } catch (...) {
+                    current_tracker.timestamp = std::chrono::system_clock::now();
+                }
+            }
+        } else if (line.find("\"performance_score\":") != std::string::npos) {
+            size_t start = line.find(":") + 1;
+            std::string score_str = line.substr(start);
+            score_str = score_str.substr(0, score_str.find(","));
+            try {
+                current_tracker.performance_score = std::stod(score_str);
+            } catch (...) {
+                current_tracker.performance_score = 1.0;
+            }
+        } else if (line.find("\"hardware_fingerprint\":") != std::string::npos) {
+            size_t start = line.find("\"", line.find(":") + 1) + 1;
+            size_t end = line.find("\"", start);
+            if (start != std::string::npos && end != std::string::npos) {
+                current_tracker.hardware_fingerprint = line.substr(start, end - start);
+            }
+        } else if (line.find("\"results\":") != std::string::npos) {
+            in_results_array = true;
+            current_tracker.results.clear();
+        } else if (line.find("}") != std::string::npos && !in_results_array) {
+            // End of a tracker object
+            history.push_back(current_tracker);
+            current_tracker = RegressionTracker{}; // Reset
+        } else if (line.find("]") != std::string::npos && in_results_array) {
+            in_results_array = false;
+        }
+    }
     
     return history;
 }

@@ -29,19 +29,40 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM Build enhanced UI version (placeholder for future Makefile integration)
+REM Build enhanced UI version
 echo.
-echo Enhanced UI features:
-echo - Rich CLI interface with colors and tables
-echo - Interactive mode support
-echo - JSON/CSV output formats
-echo - Progress bars and status indicators
-echo - Comprehensive help system
-echo.
+echo Building enhanced CLI interface...
 
-REM Copy enhanced CLI source to temporary location for future integration
+REM Create UI output directory
 if not exist "build\ui\" mkdir build\ui\
+
+REM Copy source files
 xcopy /y ui\*.* build\ui\ >nul 2>&1
+
+REM Build enhanced executable using existing Makefile infrastructure
+echo Compiling enhanced CLI components...
+x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -c ui/main_enhanced.cpp -o build/release/obj/main_enhanced.o
+if errorlevel 1 (
+    echo Error: Enhanced main compilation failed
+    exit /b 1
+)
+
+echo Compiling enhanced CLI utilities...
+x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude -c ui/cli/enhanced_cli.cpp -o build/release/obj/enhanced_cli.o
+if errorlevel 1 (
+    echo Error: Enhanced CLI compilation failed
+    exit /b 1
+)
+
+echo Linking enhanced executable...
+x86_64-w64-mingw32-g++ -std=c++17 -Wall -Wextra -Wpedantic -O3 -DNDEBUG -march=native -mtune=native -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -flto -Iinclude build/release/obj/analytic_bs.o build/release/obj/lsm.o build/release/obj/main_enhanced.o build/release/obj/enhanced_cli.o build/release/obj/monte_carlo_gbm.o build/release/obj/pde_cn.o build/release/obj/pde_cn_american.o build/release/obj/performance_utils.o build/release/obj/slv.o build/release/obj/slv_calibration.o -o build/release/bin/bsm_enhanced.exe -flto
+if errorlevel 1 (
+    echo Error: Enhanced executable linking failed
+    exit /b 1
+)
+
+echo ✓ Enhanced CLI interface compiled successfully
+echo ✓ Enhanced executable: build\release\bin\bsm_enhanced.exe
 
 echo ======================================
 echo Build Summary:
