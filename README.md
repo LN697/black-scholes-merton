@@ -1,44 +1,16 @@
 # Black-Scholes-Merton Pricing Toolkit
-
-[![- **Profile-guided optimization support
-- Fast math optimizations (optional, with accuracy validation)
-
-## 🚀 Development Roadmap & ML/AI Integration
-
-### Machine Learning & AI Enhancements
-- **LSTM Volatility Models**: Deep learning for volatility surface prediction
-- **Physics-Informed Neural Networks (PINNs)**: Neural network PDE solvers
-- **Reinforcement Learning**: Adaptive hedging strategies
-- **Ensemble Methods**: Multiple model averaging for accuracy improvement
-- **Real-time Market Adaptation**: Dynamic model recalibration
-
-### Enhanced User Experience
-- **Professional CLI Interface**: Rich terminal interface with real-time monitoring
-- **Web Dashboard**: React-based professional trading interface
-- **Python Integration**: Seamless Python bindings with pandas/numpy
-- **REST API**: Cloud-ready microservices architecture
-- **WebSocket Streaming**: Real-time market data and pricing updates
-
-### Enterprise Architecture
-- **Microservices**: Containerized pricing services with Docker/Kubernetes
-- **Cloud-Native**: AWS/Azure deployment with auto-scaling
-- **Distributed Computing**: Multi-node cluster processing
-- **Performance Monitoring**: Advanced telemetry and observability
-
-**📁 Full Development Strategy**: See [`dev/`](dev/) directory for complete roadmap, prototypes, and implementation guides.
-
-## 📁 Project Structured Status](https://img.shields.io/badge/build-passing-brightgreen)](README.md)
+ [![Status](https://img.shields.io/badge/build-passing-brightgreen)](README.md)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/std/the-standard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Development](https://img.shields.io/badge/development-enterprise--grade-blue)](dev/README.md)
 
 A high-performance, modular C++17 options pricing library featuring multiple numerical methods and advanced stochastic volatility models. Now enhanced with enterprise-grade ML/AI capabilities and modern UX interfaces.
 
-## 🎯 Enterprise Development Strategy
+## Enterprise Development Strategy
 
 **NEW**: This project includes a comprehensive development roadmap for enterprise-grade enhancements including machine learning integration, advanced UX interfaces, and cloud-native architecture. See [`dev/`](dev/) directory for complete strategy documentation and prototype implementations.
 
-## 🚀 Features
+## Features
 
 ### Core Pricing Methods
 - **Analytical Black-Scholes**: Closed-form European option pricing with Greeks
@@ -54,7 +26,7 @@ A high-performance, modular C++17 options pricing library featuring multiple num
 - **Model Calibration**: Framework for SLV calibration to market data
 - **Implied Volatility**: Newton-Raphson solver for market-implied parameters
 
-## 🎯 Performance Features
+## Performance Features
 
 ### New Performance Optimization Framework
 - **Architecture Detection**: Automatic CPU feature detection and optimization
@@ -73,7 +45,7 @@ A high-performance, modular C++17 options pricing library featuring multiple num
 - Profile-guided optimization support
 - Fast math optimizations (optional, with accuracy validation)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── include/               # Public API headers
@@ -87,7 +59,7 @@ A high-performance, modular C++17 options pricing library featuring multiple num
 ├── src/                  # Implementation files
 ├── test/                 # Unit tests and validation
 ├── docs/                 # Comprehensive documentation
-├── dev/                  # 🆕 Enterprise development strategy
+├── dev/                  # Enterprise development strategy
 │   ├── research_initiatives/  # ML/AI research and prototypes
 │   ├── prototype_implementations/ # Enhanced interfaces and frameworks
 │   ├── architecture/     # Cloud-native and microservices design
@@ -97,7 +69,7 @@ A high-performance, modular C++17 options pricing library featuring multiple num
 └── Makefile             # Cross-platform build system
 ```
 
-## 🔧 Quick Start
+## Quick Start
 
 ### Prerequisites
 - **C++17 compatible compiler** (GCC 7+, Clang 5+, MSVC 2019+)
@@ -168,7 +140,7 @@ g++ -std=c++17 -O3 -march=native -Iinclude src/*.cpp -o bsm.exe
 g++ -std=c++17 -O3 -march=native -mavx2 -mfma -fopenmp -Iinclude src/*.cpp -o bsm -lnuma
 ```
 
-## 🏃‍♂️ Usage
+## Usage
 
 ### Running the Demo
 ```bash
@@ -233,7 +205,7 @@ MCResult slv_result = mc_slv_price(100.0, 100.0, 0.05, 1.0,
                                    true, true);
 ```
 
-## 📊 Performance Benchmarks
+## Performance Benchmarks
 
 | Method | Paths/Steps | Time (ms) | Accuracy (vs BS) |
 |--------|-------------|-----------|------------------|
@@ -245,7 +217,7 @@ MCResult slv_result = mc_slv_price(100.0, 100.0, 0.05, 1.0,
 
 *Benchmarks on Intel i7-10700K @ 3.8GHz, GCC 11.2, -O3 -march=native*
 
-## 🧪 Testing and Validation
+## Testing and Validation
 
 ### Running Tests
 ```bash
@@ -271,7 +243,7 @@ void test_new_feature() {
 }
 ```
 
-## 🔧 Configuration and Optimization
+## Configuration and Optimization
 
 ### Performance Build Configuration
 ```bash
@@ -326,8 +298,6 @@ make regression-test
 # Threading analysis
 make thread-analysis
 ```
-make clean && make CXXFLAGS="-std=c++17 -O3 -march=native -fprofile-use"
-```
 
 ### Parallel Computing
 ```bash
@@ -375,7 +345,7 @@ auto thread_config = bsm::performance::ThreadManager::initialize_threading();
 bsm::performance::ThreadManager::set_cpu_affinity({0, 1, 2, 3});
 ```
 
-## 🔬 Mathematical Models
+## Mathematical Models
 
 ### Black-Scholes Model
 Classic geometric Brownian motion with constant volatility:
@@ -399,7 +369,7 @@ where `L(S,t)` is the leverage function calibrated to market data.
 - **PDE Approach**: Projected Crank-Nicolson with early exercise boundary
 - **LSM Approach**: Longstaff-Schwartz regression on continuation value
 
-## 🛠️ Extension Points
+## Extension Points
 
 ### Adding New Models
 ```cpp
@@ -440,8 +410,31 @@ struct MCResult {
     // ... other sensitivities
 };
 ```
+## Development Roadmap & ML/AI Integration
 
-## � Next Steps: Enterprise Evolution
+### Machine Learning & AI Enhancements
+- **LSTM Volatility Models**: Deep learning for volatility surface prediction
+- **Physics-Informed Neural Networks (PINNs)**: Neural network PDE solvers
+- **Reinforcement Learning**: Adaptive hedging strategies
+- **Ensemble Methods**: Multiple model averaging for accuracy improvement
+- **Real-time Market Adaptation**: Dynamic model recalibration
+
+### Enhanced User Experience
+- **Professional CLI Interface**: Rich terminal interface with real-time monitoring
+- **Web Dashboard**: React-based professional trading interface
+- **Python Integration**: Seamless Python bindings with pandas/numpy
+- **REST API**: Cloud-ready microservices architecture
+- **WebSocket Streaming**: Real-time market data and pricing updates
+
+### Enterprise Architecture
+- **Microservices**: Containerized pricing services with Docker/Kubernetes
+- **Cloud-Native**: AWS/Azure deployment with auto-scaling
+- **Distributed Computing**: Multi-node cluster processing
+- **Performance Monitoring**: Advanced telemetry and observability
+
+**Full Development Strategy**: See [`dev/`](dev/) directory for complete roadmap, prototypes, and implementation guides.
+
+## Next Steps: Enterprise Evolution
 
 This project is positioned for significant enterprise enhancement through the comprehensive development strategy outlined in the [`dev/`](dev/) directory. Key next steps include:
 
@@ -458,7 +451,7 @@ This project is positioned for significant enterprise enhancement through the co
 
 For detailed implementation guides, architectural blueprints, and prototype code, explore the comprehensive strategy documentation in [`dev/README.md`](dev/README.md).
 
-## �📚 References and Further Reading
+## References and Further Reading
 
 ### Academic Papers
 - Black, F., & Scholes, M. (1973). "The Pricing of Options and Corporate Liabilities"
@@ -477,7 +470,7 @@ For detailed implementation guides, architectural blueprints, and prototype code
 - Gatheral, J. (2006). "The Volatility Surface: A Practitioner's Guide"
 - Andersen, L., & Piterbarg, V. (2010). "Interest Rate Modeling"
 
-## 🤝 Contributing
+## Contributing
 
 ### Development Setup
 ```bash
@@ -508,16 +501,9 @@ find . -name "*.cpp" -o -name "*.hpp" | xargs clang-format -i
 3. Include performance benchmarks for algorithmic changes
 4. Follow existing code style and naming conventions
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Black-Scholes option pricing framework
-- Numerical recipes and computational finance literature
-- Open-source mathematical libraries and algorithms
-- Contributors and maintainers of the C++ standards
 
 ---
 
