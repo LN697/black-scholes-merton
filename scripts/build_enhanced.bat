@@ -61,16 +61,16 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo ✓ Enhanced CLI interface compiled successfully
-echo ✓ Enhanced executable: build\release\bin\bsm_enhanced.exe
+echo [OK] Enhanced CLI interface compiled successfully
+echo [OK] Enhanced executable: build\release\bin\bsm_enhanced.exe
 
 echo ======================================
 echo Build Summary:
 echo ======================================
-echo ✓ Core BSM library compiled successfully
-echo ✓ Main executable: build\bin\bsm.exe
-echo ✓ Test executable: build\bin\tests.exe
-echo ✓ Enhanced UI source ready for integration
+echo [OK] Core BSM library compiled successfully
+echo [OK] Main executable: build\release\bin\bsm.exe
+echo [OK] Test executable: build\release\bin\tests.exe
+echo [OK] Enhanced UI source ready for integration
 echo.
 
 REM Display build artifacts
@@ -90,5 +90,5 @@ echo 2. Setup web dashboard (React + REST API)
 echo 3. Implement real-time data connections
 echo.
 
-echo ✓ Build completed successfully!
+echo [OK] Build completed successfully!
 pause

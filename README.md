@@ -163,6 +163,34 @@ g++ -std=c++17 -O3 -march=native -mavx2 -mfma -fopenmp -Iinclude src/*.cpp -o bs
 ./build/bin/bsm --benchmark-suite
 
 # Quick performance test
+./build/bin/bsm --quick-test
+```
+
+### Python Option Pricing Analyzer
+**NEW**: Comprehensive Python script for CSV-based option analysis with automatic format detection.
+
+```bash
+# Analyze NSE/BSE option chain
+python scripts/option_pricing_analyzer.py input/option-chain-ED-NIFTY-14-Aug-2025.csv
+
+# Analyze portfolio with custom parameters
+python scripts/option_pricing_analyzer.py examples/sample_portfolio.csv --spot 23500 --rate 0.06
+
+# Generate JSON output for programmatic use
+python scripts/option_pricing_analyzer.py input/options.csv --output json --file results.json
+
+# Generate CSV output for Excel analysis
+python scripts/option_pricing_analyzer.py examples/portfolio.csv --output csv --file analysis.csv
+```
+
+**Features:**
+- **Auto-format Detection**: Automatically detects CSV format (option chain vs portfolio)
+- **Market Analysis**: Identifies over/underpriced options vs theoretical Black-Scholes values
+- **Portfolio Metrics**: Net Greeks, risk metrics, and portfolio-level analysis
+- **Multiple Formats**: NSE/BSE option chains and custom portfolio formats
+- **Flexible Output**: Table, JSON, and CSV formats for different use cases
+
+See [`scripts/README_option_analyzer.md`](scripts/README_option_analyzer.md) for detailed documentation.
 ./build/bin/bsm --quick-benchmark
 
 # Set thread count
